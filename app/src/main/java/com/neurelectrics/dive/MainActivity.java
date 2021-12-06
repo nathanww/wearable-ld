@@ -35,7 +35,9 @@ public class MainActivity extends AppCompatActivity {
     MediaPlayer lucidMusic;
     MediaPlayer signalcue;
     MediaPlayer noguidance;
-    int[] delayTimes={45,45,45,45,45,70,55,65,70,80,65,60,75,75,90,120};
+    Timer trainingTimer;
+
+    int[] delayTimes={0,45,45,45,45,70,55,65,70,80,65,60,75,75,90,120};
     int STIMULUS_LENGTH=73;  //how long is the cue sound? THis  prevents issues with it overlapping
     int delayItem=0;
     int trainingEpochs=0; //one training epoch is 1 seconds, this is used to control the timing during training
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 training2.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //when the first part of the instrutionas are complete, star tthe second part
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        new Timer().schedule(new TimerTask() {
+                        trainingTimer.schedule(new TimerTask() {
                             @Override
                             public void run() {
                                 handleTrainingSounds(); //start the period where we just play cues and sintructions with long pauses in between.
@@ -102,10 +104,16 @@ public class MainActivity extends AppCompatActivity {
         if (trainingEpochs == delayTimes[delayItem]+STIMULUS_LENGTH) { //we have to add the length of the stimulus because this track the onset time, not the ffset time
 
             lucidMusic.start();
-            signalcue.start();
+            if (delayItem < 4) {
+                signalcue.start();
+            }
             trainingEpochs=1;
             if (delayItem < delayTimes.length-1) {
                 delayItem++;
+            }
+            else {
+                trainingTimer.cancel();
+                trainingTimer.purge();
             }
             Log.i("cycle","start");
 
