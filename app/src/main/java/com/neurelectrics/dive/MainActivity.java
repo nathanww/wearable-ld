@@ -3,6 +3,7 @@ package com.neurelectrics.dive;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,11 +37,12 @@ public class MainActivity extends AppCompatActivity {
     MediaPlayer signalcue;
     MediaPlayer noguidance;
     Timer trainingTimer;
-
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
     float oldx,oldy,oldz=0; //variables to detect sudden motion
-    float MOTION_THRESH=1f; //how much motion is considered an arousal
+    float MOTION_THRESH=3f; //how much motion is considered an arousal
     float ONSET_THRESH=0.99f; //how high does the rem probability have to be to trigger cueing?
-    float cueVolume=1.0f;
+    float cueVolume=0.0f;
     float CUE_VOLUME_INC=0.01f; //how much does the cue volume increase ach second?
     boolean DEBUG_MODE=true;
 
@@ -134,6 +136,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }, 0, 10000);
+
+        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        editor=sharedPref.edit();
+
     }
 
     void handleTrainingSounds() { //handle the repeating cues during training with different inter stimulus intervals
@@ -189,6 +195,17 @@ public class MainActivity extends AppCompatActivity {
                     if (cueRunning && (Math.abs(motionX-oldx) > MOTION_THRESH ||Math.abs(motionY-oldy) > MOTION_THRESH || Math.abs(motionZ-oldz) > MOTION_THRESH)) {
                         isArousal=true;
                         lastArousal=elapsedTime;
+
+                        float arousalSum=sharedPref.getFloat("arousalSum",0);
+                        int arousalN=sharedPref.getInt("arousalN",0);
+                        if (arousalN < 4) {
+                            arousalN++;
+                            arousalSum = arousalSum + cueVolume;
+                            editor.putFloat("arousalSum", arousalSum);
+                            editor.putInt("arousalN", arousalN);
+                            editor.commit();
+                        }
+                        cueVolume=0;
                     }
                     oldx=motionX;
                     oldy=motionY;
@@ -196,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                     //cueing logic control
-                    Log.i("cuedata",cueRunning+","+s3Prob+","+(elapsedTime-lastArousal));
+                    Log.i("cuedata",cueRunning+","+cueVolume+","+s3Prob+","+(elapsedTime-lastArousal));
                     if (s3Prob >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME) { //conditions are good for cueing
                         if (!cueRunning) {
                             cueRunning=true;
@@ -206,6 +223,17 @@ public class MainActivity extends AppCompatActivity {
                             lucidMusic.start();
                         }
                         cueVolume=cueVolume+CUE_VOLUME_INC;
+                        //check to see if we've recorded enough arousals to set a volume cap. If we have, make sure the volume doesn't exceed the cap
+                        float arousalSum=sharedPref.getFloat("arousalSum",0);
+                        int arousalN=sharedPref.getInt("arousalN",0);
+                        if (arousalN >= 4) {
+                            float meanThresh=(arousalSum/arousalN)*0.75f;
+                            if (cueVolume > meanThresh) {
+                                cueVolume=meanThresh;
+                                Log.i("volume", "capped at "+meanThresh);
+                            }
+                        }
+                        lucidMusic.setVolume(cueVolume,cueVolume);
                     }
                     else {
 
