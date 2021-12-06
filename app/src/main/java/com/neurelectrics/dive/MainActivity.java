@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     float ONSET_THRESH=0.99f; //how high does the rem probability have to be to trigger cueing?
     float cueVolume=0.0f;
     float CUE_VOLUME_INC=0.01f; //how much does the cue volume increase ach second?
+    int BUFFER_SIZE=60; //HOW MANY TO AVERAGE?
     boolean DEBUG_MODE=true;
 
     boolean cueRunning=false;
@@ -51,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
     int ONSET_TIME=14400; //minimum time the app must be running before it will cue
     int BACKOFF_TIME=600;
     int elapsedTime=0;
+
+    ArrayList<Float> probBuffer=new ArrayList<Float>(); //buffer for averaging REM probabilities
+
 
 
     int[] delayTimes={0,45,45,45,45,70,55,65,70,80,65,60,75,75,90,120};
@@ -169,29 +173,58 @@ public class MainActivity extends AppCompatActivity {
 
     //fitbitServer handles getting data from the fitbit which sends it on port 8085
     private class fitbitServer extends NanoHTTPD {
+        FileWriter fileWriter;
+        PrintWriter printWriter;
 
         public fitbitServer() {
             super(8085);
             Log.i("fitbit", "server start");
-
+            try {
+                fileWriter = new FileWriter(getApplicationContext().getExternalFilesDir(null) + "/fitbitdata.txt", true);
+                Log.i("filedir",getApplicationContext().getExternalFilesDir(null)+"");
+                printWriter = new PrintWriter(fileWriter);
+            }
+            catch (Exception e) {
+                Log.e("Server","Error opening file");
+            }
 
         }
 
         /*dummy stage data
         {data={"hr":77,"accx":-3.365152359008789,"accy":3.8511905670166016,"accz":8.557137489318848,"gyrox":1.1430635452270508,"gyroy":0.11505126953125,"gyroz":-0.23862648010253906,"seconds":286,"aqTime":1638816782462,"b":96}STAGE{"Probability( is3=0 )":0.9999999999999639,"Probability( is3=1 )":3.6029740452123885e-14,"Most Likely is3":0}, NanoHttpd.QUERY_STRING=data=%7B%22hr%22%3A77%2C%22accx%22%3A-3.365152359008789%2C%22accy%22%3A3.8511905670166016%2C%22accz%22%3A8.557137489318848%2C%22gyrox%22%3A1.1430635452270508%2C%22gyroy%22%3A0.11505126953125%2C%22gyroz%22%3A-0.23862648010253906%2C%22seconds%22%3A286%2C%22aqTime%22%3A1638816782462%2C%22b%22%3A96%7DSTAGE%7B%22Probability(%20is3%3D0%20)%22%3A0.9999999999999639%2C%22Probability(%20is3%3D1%20)%22%3A3.6029740452123885e-14%2C%22Most%20Likely%20is3%22%3A0%7D}*/
-
-        void handleStaging(String stageData) {
+        private float average(ArrayList<Float> data) {
+            float sum = 0;
+            for (int i=0; i< data.size(); i++) {
+                sum += data.get(i);
+            }
+            return sum / data.size();
+        }
+        String handleStaging(String stageData) {
             elapsedTime++;
             //logic for controlling cueing
+            if (stageData.indexOf("\"Probability( is3=1 )\":") > -1) {
+                float s3Prob=Float.parseFloat(stageData.split(":")[12].split(",")[0]);
+                float motionX=Float.parseFloat(stageData.split(":")[2].split(",")[0]);
+                float motionY=Float.parseFloat(stageData.split(":")[3].split(",")[0]);
+                float motionZ=Float.parseFloat(stageData.split(":")[4].split(",")[0]);
+                float hr=Float.parseFloat(stageData.split(":")[1].split(",")[0]);
+                float gyrox=Float.parseFloat(stageData.split(":")[5].split(",")[0]);
+                float gyroy=Float.parseFloat(stageData.split(":")[6].split(",")[0]);
+                float gyroz=Float.parseFloat(stageData.split(":")[7].split(",")[0]);
+                probBuffer.add(s3Prob);
+                if (probBuffer.size() > BUFFER_SIZE) {
+                    probBuffer.remove(0);
+                }
+                float avgProb=average(probBuffer);
+
+
+                boolean isArousal=false;
             if (elapsedTime >= ONSET_TIME) {
-                if (stageData.indexOf("\"Probability( is3=1 )\":") > -1) {
+
+
                     //String test=stageData.split("\"Probability( is3=1 )\":")[0];
                     //Log.d("debug",test);
-                    float s3Prob=Float.parseFloat(stageData.split(":")[11].split(",")[0]);
-                    float motionX=Float.parseFloat(stageData.split(":")[1].split(",")[0]);
-                    float motionY=Float.parseFloat(stageData.split(":")[2].split(",")[0]);
-                    float motionZ=Float.parseFloat(stageData.split(":")[3].split(",")[0]);
-                    boolean isArousal=false;
+
                     if (cueRunning && (Math.abs(motionX-oldx) > MOTION_THRESH ||Math.abs(motionY-oldy) > MOTION_THRESH || Math.abs(motionZ-oldz) > MOTION_THRESH)) {
                         isArousal=true;
                         lastArousal=elapsedTime;
@@ -213,8 +246,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                     //cueing logic control
-                    Log.i("cuedata",cueRunning+","+cueVolume+","+s3Prob+","+(elapsedTime-lastArousal));
-                    if (s3Prob >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME) { //conditions are good for cueing
+                    if (avgProb >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME) { //conditions are good for cueing
                         if (!cueRunning) {
                             cueRunning=true;
                             lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.eno1fade);
@@ -244,10 +276,13 @@ public class MainActivity extends AppCompatActivity {
 
                         }
                     }
-                }
-                else {
-                    Log.e("cuedata","no stage");
-                }
+            }
+                return(hr+","+motionX+","+motionY+","+motionZ+","+gyrox+","+gyroy+","+gyroz+","+s3Prob+","+avgProb+","+cueRunning+","+cueVolume+","+(elapsedTime-lastArousal));
+
+            } //no stage info available
+            else {
+                Log.e("cuing","No stage");
+                return "";
             }
         }
 
@@ -258,7 +293,12 @@ public class MainActivity extends AppCompatActivity {
             //Log.e("fitbitserver", "request");
             if (uri.indexOf("rawdata") > -1) { //recieved a data packet from the Fitbit, set the Fitbit status to good.
                 Log.i("data",parameters.toString());
-                handleStaging(parameters.toString());
+                String result=handleStaging(parameters.toString());
+                Log.i("cuedata",result);
+                String temp=parameters.toString()+","+result;
+                printWriter.print(result);
+                printWriter.flush();
+
             }
             return newFixedLengthResponse(Response.Status.OK, "normal", "");
 
