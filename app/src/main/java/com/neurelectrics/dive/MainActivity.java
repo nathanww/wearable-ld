@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     float cueVolume=0.0f;
     float CUE_VOLUME_INC=0.01f; //how much does the cue volume increase ach second?
     int BUFFER_SIZE=60; //HOW MANY TO AVERAGE?
-    boolean DEBUG_MODE=true;
+    boolean DEBUG_MODE=false;
 
     boolean cueRunning=false;
     int lastArousal=0;
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 startButton.setEnabled(false);
                 startTraining= MediaPlayer.create(MainActivity.this,R.raw.training1);
-                training2= MediaPlayer.create(MainActivity.this,R.raw.beeps);
+                training2= MediaPlayer.create(MainActivity.this,R.raw.training2);
 
                 lucidMusic.setLooping(false);
 
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                         }, 10000, 1000);
                     }
                 });
-                training2.start();
+                startTraining.start();
             }
         });
         if (DEBUG_MODE) {
@@ -277,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
             }
-                return(hr+","+motionX+","+motionY+","+motionZ+","+gyrox+","+gyroy+","+gyroz+","+s3Prob+","+avgProb+","+cueRunning+","+cueVolume+","+(elapsedTime-lastArousal));
+                return(System.currentTimeMillis()+","+hr+","+motionX+","+motionY+","+motionZ+","+gyrox+","+gyroy+","+gyroz+","+s3Prob+","+avgProb+","+cueRunning+","+cueVolume+","+(elapsedTime-lastArousal));
 
             } //no stage info available
             else {
@@ -295,8 +295,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("data",parameters.toString());
                 String result=handleStaging(parameters.toString());
                 Log.i("cuedata",result);
-                String temp=parameters.toString()+","+result;
-                printWriter.print(result);
+                String temp=parameters.toString()+","+result+"\n";
+                printWriter.print(temp);
                 printWriter.flush();
 
             }
