@@ -1,16 +1,21 @@
 package com.neurelectrics.dive;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -29,6 +34,8 @@ import java.util.TimerTask;
 
 import fi.iki.elonen.NanoHTTPD;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class MainActivity extends AppCompatActivity {
     fitbitServer server;
     MediaPlayer startTraining;
@@ -43,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     float MOTION_THRESH=3f; //how much motion is considered an arousal
     float ONSET_THRESH=0.99f; //how high does the rem probability have to be to trigger cueing?
     float cueVolume=0.0f;
-    float CUE_VOLUME_INC=0.01f; //how much does the cue volume increase ach second?
+    float CUE_VOLUME_INC=0.005f; //how much does the cue volume increase ach second?
     int BUFFER_SIZE=60; //HOW MANY TO AVERAGE?
     boolean DEBUG_MODE=false;
 
@@ -124,8 +131,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         if (DEBUG_MODE) {
-            ONSET_TIME=0;
-            BACKOFF_TIME=10;
+            elapsedTime=ONSET_TIME+50;
+            //BACKOFF_TIME=10;
             ONSET_THRESH=0;
 
         }
@@ -143,6 +150,28 @@ public class MainActivity extends AppCompatActivity {
 
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         editor=sharedPref.edit();
+
+
+        //set up the username field
+        EditText userID=(EditText) findViewById(R.id.userID);
+        userID.setText(sharedPref.getString("userID","DEFAULT"));
+        userID.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                editor.putString("userID",""+s);
+                editor.apply();
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
     }
 
@@ -286,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         public Response serve(String uri, Method method,
                               Map<String, String> header,
                               Map<String, String> parameters,
@@ -298,6 +328,15 @@ public class MainActivity extends AppCompatActivity {
                 String temp=parameters.toString()+","+result+"\n";
                 printWriter.print(temp);
                 printWriter.flush();
+                //how send telemetry
+                try {
+                    String urlString = "https://biostream-1024.appspot.com/sendps?"+"user=" + sharedPref.getString("userID","DEFAULT") + "&data=" + URLEncoder.encode(result, StandardCharsets.UTF_8.toString());
+                    URL url = new URL(urlString);
+                    url.openStream();
+                } catch (Exception e) {
+                    Log.e("telemetry", "error");
+                    e.printStackTrace();
+                }
 
             }
             return newFixedLengthResponse(Response.Status.OK, "normal", "");
