@@ -37,4 +37,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start dreaming!" />
+
+    <TextView
+        android:id="@+id/appRunningHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="App is running. Enjoy your dreams! \n\n Keep your phone's screen on and keep the phone plugged in.\n\n If you're woken by the sound, you can stop it by moving your wrist. To exit the app completely, tap the button below."
+        android:textColor="#FFFCFC"
+        android:textSize="22sp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/stopButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Exit"
+        android:visibility="gone" />
 </LinearLayout>

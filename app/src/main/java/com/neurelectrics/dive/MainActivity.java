@@ -34,6 +34,7 @@ import java.util.TimerTask;
 
 import fi.iki.elonen.NanoHTTPD;
 
+import static android.view.View.GONE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class MainActivity extends AppCompatActivity {
@@ -50,16 +51,16 @@ public class MainActivity extends AppCompatActivity {
     float MOTION_THRESH=3f; //how much motion is considered an arousal
     float ONSET_THRESH=0.99f; //how high does the rem probability have to be to trigger cueing?
     float cueVolume=0.0f;
-    float CUE_VOLUME_INC=0.005f; //how much does the cue volume increase ach second?
+    float CUE_VOLUME_INC=0.00025f; //how much does the cue volume increase ach second?
     int BUFFER_SIZE=60; //HOW MANY TO AVERAGE?
     boolean DEBUG_MODE=false;
 
     boolean cueRunning=false;
-    int lastArousal=0;
-    int ONSET_TIME=14400; //minimum time the app must be running before it will cue
+
+    int ONSET_TIME=3600; //minimum time the app must be running before it will cue
     int BACKOFF_TIME=600;
     int elapsedTime=0;
-
+    int lastArousal=(0-BACKOFF_TIME);
     ArrayList<Float> probBuffer=new ArrayList<Float>(); //buffer for averaging REM probabilities
 
 
@@ -85,12 +86,49 @@ public class MainActivity extends AppCompatActivity {
             Log.e("Httpd", ioe.getMessage());
         }
         Log.w("Httpd", "Web server initialized.");
+        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        editor=sharedPref.edit();
 
+
+        //set up the username field
+        EditText userID=(EditText) findViewById(R.id.userID);
+        userID.setText(sharedPref.getString("userID","DEFAULT"));
+        userID.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                editor.putString("userID",""+s);
+                editor.apply();
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        Button stopButton = (Button) findViewById(R.id.stopButton);
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.exit(0);
+            }
+        }
+            );
         Button startButton = (Button) findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startButton.setEnabled(false);
+                startButton.setVisibility(View.GONE);
+                userID.setVisibility(View.GONE);
+                TextView prompt=(TextView)  findViewById(R.id.userPrompt);
+                prompt.setVisibility(View.GONE);
+                TextView instr=(TextView)  findViewById(R.id.appRunningHeader);
+                instr.setVisibility(View.VISIBLE);
+                stopButton.setVisibility(View.VISIBLE);
                 startTraining= MediaPlayer.create(MainActivity.this,R.raw.training1);
                 training2= MediaPlayer.create(MainActivity.this,R.raw.training2);
 
@@ -131,9 +169,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         if (DEBUG_MODE) {
-            elapsedTime=ONSET_TIME+50;
+           // elapsedTime=ONSET_TIME+50;
             //BACKOFF_TIME=10;
-            ONSET_THRESH=0;
+            //ONSET_THRESH=0;
 
         }
 
@@ -142,36 +180,24 @@ public class MainActivity extends AppCompatActivity {
         fitbitMonitor.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (System.currentTimeMillis() > lastPacket+10000) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView connectionWarning=(TextView) findViewById(R.id.connectionWarning);
+                        if (System.currentTimeMillis() > lastPacket+10000) {
+                            connectionWarning.setVisibility(View.VISIBLE);
+                        }
+                        else {
+                            connectionWarning.setVisibility(GONE);
 
-                }
-            }
-        }, 0, 10000);
-
-        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        editor=sharedPref.edit();
-
-
-        //set up the username field
-        EditText userID=(EditText) findViewById(R.id.userID);
-        userID.setText(sharedPref.getString("userID","DEFAULT"));
-        userID.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editor.putString("userID",""+s);
-                editor.apply();
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        }
+                    }
+                });
 
             }
+        }, 15000, 10000);
 
-            @Override
-            public void afterTextChanged(Editable s) {
 
-            }
-        });
 
     }
 
@@ -247,8 +273,10 @@ public class MainActivity extends AppCompatActivity {
                 float avgProb=average(probBuffer);
 
 
+
                 boolean isArousal=false;
             if (elapsedTime >= ONSET_TIME) {
+                Log.i("cuedata","point1");
 
 
                     //String test=stageData.split("\"Probability( is3=1 )\":")[0];
@@ -274,8 +302,11 @@ public class MainActivity extends AppCompatActivity {
                     oldz=motionZ;
 
 
-                    //cueing logic control
-                    if (avgProb >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME) { //conditions are good for cueing
+                Log.i("cuedata",elapsedTime+","+lastArousal+","+(elapsedTime-lastArousal)+","+BACKOFF_TIME);
+                    //if (avgProb >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME) { //conditions are good for cueing
+                if (avgProb >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
+                    Log.i("cuedata","point2");
+
                         if (!cueRunning) {
                             cueRunning=true;
                             lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.eno1fade);
@@ -283,30 +314,31 @@ public class MainActivity extends AppCompatActivity {
                             lucidMusic.setLooping(true);
                             lucidMusic.start();
                         }
-                        cueVolume=cueVolume+CUE_VOLUME_INC;
-                        //check to see if we've recorded enough arousals to set a volume cap. If we have, make sure the volume doesn't exceed the cap
-                        float arousalSum=sharedPref.getFloat("arousalSum",0);
-                        int arousalN=sharedPref.getInt("arousalN",0);
-                        if (arousalN >= 4) {
-                            float meanThresh=(arousalSum/arousalN)*0.75f;
-                            if (cueVolume > meanThresh) {
-                                cueVolume=meanThresh;
-                                Log.i("volume", "capped at "+meanThresh);
-                            }
-                        }
-                        lucidMusic.setVolume(cueVolume,cueVolume);
+
                     }
-                    else {
+                    else if (elapsedTime-lastArousal < BACKOFF_TIME){ //arousal, stop the cues as needed
 
                         if (cueRunning) {
                             lucidMusic.stop();
                             cueRunning=false;
-
-
                         }
                     }
+                if (cueRunning) { //if the cueing is running, start incrementing the volume
+                    cueVolume = cueVolume + CUE_VOLUME_INC;
+                    //check to see if we've recorded enough arousals to set a volume cap. If we have, make sure the volume doesn't exceed the cap
+                    float arousalSum = sharedPref.getFloat("arousalSum", 0);
+                    int arousalN = sharedPref.getInt("arousalN", 0);
+                    if (arousalN >= 4) {
+                        float meanThresh = (arousalSum / arousalN) * 0.75f;
+                        if (cueVolume > meanThresh) {
+                            cueVolume = meanThresh;
+                            Log.i("volume", "capped at " + meanThresh);
+                        }
+                    }
+                    lucidMusic.setVolume(cueVolume, cueVolume);
+                }
             }
-                return(System.currentTimeMillis()+","+hr+","+motionX+","+motionY+","+motionZ+","+gyrox+","+gyroy+","+gyroz+","+s3Prob+","+avgProb+","+cueRunning+","+cueVolume+","+(elapsedTime-lastArousal));
+                return(System.currentTimeMillis()+","+hr+","+motionX+","+motionY+","+motionZ+","+gyrox+","+gyroy+","+gyroz+","+s3Prob+","+avgProb+","+cueRunning+","+cueVolume+","+(elapsedTime));
 
             } //no stage info available
             else {
@@ -321,6 +353,7 @@ public class MainActivity extends AppCompatActivity {
                               Map<String, String> parameters,
                               Map<String, String> files) {
             //Log.e("fitbitserver", "request");
+            lastPacket=System.currentTimeMillis();
             if (uri.indexOf("rawdata") > -1) { //recieved a data packet from the Fitbit, set the Fitbit status to good.
                 Log.i("data",parameters.toString());
                 String result=handleStaging(parameters.toString());
