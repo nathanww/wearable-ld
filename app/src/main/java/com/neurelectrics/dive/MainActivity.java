@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,9 +50,9 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     float oldx,oldy,oldz=0; //variables to detect sudden motion
     float MOTION_THRESH=3f; //how much motion is considered an arousal
-    float ONSET_THRESH=0.99f; //how high does the rem probability have to be to trigger cueing?
+    float ONSET_THRESH=0.95f; //how high does the rem probability have to be to trigger cueing?
     float cueVolume=0.0f;
-    float CUE_VOLUME_INC=0.00025f; //how much does the cue volume increase ach second?
+    float CUE_VOLUME_INC=0.00075f; //how much does the cue volume increase ach second?
     int BUFFER_SIZE=60; //HOW MANY TO AVERAGE?
     boolean DEBUG_MODE=false;
 
@@ -70,13 +71,24 @@ public class MainActivity extends AppCompatActivity {
     int delayItem=0;
     int trainingEpochs=0; //one training epoch is 1 seconds, this is used to control the timing during training
     double lastPacket=System.currentTimeMillis();
+
+
+    void maximizeVolume() {
+        AudioManager am =
+                (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        am.setStreamVolume(
+                AudioManager.STREAM_MUSIC,
+                am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
+                0);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         //set up the lucid music
-        lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.eno1fade);
+        lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.thetagamma);
         lucidMusic.setVolume(1.0f,1.0f);
         //start the Fitbit server
         server = new fitbitServer();
@@ -169,9 +181,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         if (DEBUG_MODE) {
-           // elapsedTime=ONSET_TIME+50;
-            //BACKOFF_TIME=10;
-            //ONSET_THRESH=0;
+            elapsedTime=ONSET_TIME+50;
+            BACKOFF_TIME=10;
+            ONSET_THRESH=0;
+            MOTION_THRESH=800F;
 
         }
 
@@ -309,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
 
                         if (!cueRunning) {
                             cueRunning=true;
-                            lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.eno1fade);
+                            lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.thetagamma);
                             lucidMusic.setVolume(cueVolume,cueVolume);
                             lucidMusic.setLooping(true);
                             lucidMusic.start();
@@ -335,7 +348,9 @@ public class MainActivity extends AppCompatActivity {
                             Log.i("volume", "capped at " + meanThresh);
                         }
                     }
+                    maximizeVolume(); //override any volume adjustments
                     lucidMusic.setVolume(cueVolume, cueVolume);
+
                 }
             }
                 return(System.currentTimeMillis()+","+hr+","+motionX+","+motionY+","+motionZ+","+gyrox+","+gyroy+","+gyroz+","+s3Prob+","+avgProb+","+cueRunning+","+cueVolume+","+(elapsedTime));
