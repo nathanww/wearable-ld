@@ -86,6 +86,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //keep the cpu on
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "Dive::DataAcquistion");
+        wakeLock.acquire();
 
         //set up the lucid music
         lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.thetagamma);
