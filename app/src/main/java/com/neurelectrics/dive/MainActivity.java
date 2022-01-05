@@ -3,7 +3,10 @@ package com.neurelectrics.dive;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -18,6 +21,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,11 +59,12 @@ public class MainActivity extends AppCompatActivity {
     float cueVolume=0.0f;
     float CUE_VOLUME_INC=0.00075f; //how much does the cue volume increase ach second?
     int BUFFER_SIZE=60; //HOW MANY TO AVERAGE?
+    boolean conFixArm=false; //whether the app will try to restart itself on exit, set to true if we need to restart the Fitbit app to fix a connection issue
     boolean DEBUG_MODE=false;
 
     boolean cueRunning=false;
 
-    int ONSET_TIME=3600; //minimum time the app must be running before it will cue
+    int ONSET_TIME=14400; //minimum time the app must be running before it will cue
     int BACKOFF_TIME=600;
     int elapsedTime=0;
     int lastArousal=(0-BACKOFF_TIME);
@@ -206,19 +212,25 @@ public class MainActivity extends AppCompatActivity {
                             connectionWarning.setVisibility(View.VISIBLE);
                         }
                         else {
-                            connectionWarning.setVisibility(GONE);
-
+                            connectionWarning.setVisibility(View.GONE);
                         }
                     }
                 });
 
             }
-        }, 15000, 10000);
+        }, 10000, 1000);
 
 
 
     }
+    private void fixConnection() {
+        conFixArm=true; //enable app to self-restart
+               Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.fitbit.FitbitMobile");
+        if (launchIntent != null) {
+            startActivity(launchIntent);//null pointer check in case package name was not found
+        }
 
+    }
     void handleTrainingSounds() { //handle the repeating cues during training with different inter stimulus intervals
         if (trainingEpochs == delayTimes[delayItem]+STIMULUS_LENGTH) { //we have to add the length of the stimulus because this track the onset time, not the ffset time
 
@@ -241,6 +253,8 @@ public class MainActivity extends AppCompatActivity {
             trainingEpochs++;
         }
     }
+
+
 
 
 
