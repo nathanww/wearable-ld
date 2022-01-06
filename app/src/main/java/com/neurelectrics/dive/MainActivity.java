@@ -22,7 +22,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.jakewharton.processphoenix.ProcessPhoenix;
+import com.github.javiersantos.appupdater.AppUpdater;
+import com.github.javiersantos.appupdater.enums.UpdateFrom;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -92,6 +93,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //set up the thing to check for updates
+        AppUpdater updater = new AppUpdater(this);
+        updater.setUpdateFrom(UpdateFrom.JSON);
+        updater.setUpdateJSON("https://raw.githubusercontent.com/nathanww/wearable-ld/master/version.json");
+        updater.start();
         //keep the cpu on
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
