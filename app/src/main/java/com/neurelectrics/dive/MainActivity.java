@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
     float oldx,oldy,oldz=0; //variables to detect sudden motion
-    float MOTION_THRESH=3f; //how much motion is considered an arousal
+    float MOTION_THRESH=5f; //how much motion is considered an arousal
     float ONSET_THRESH=0.95f; //how high does the rem probability have to be to trigger cueing?
     float cueVolume=0.0f;
     float CUE_VOLUME_INC=0.00075f; //how much does the cue volume increase ach second?
@@ -94,11 +94,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //set up the thing to check for updates
-        AppUpdater updater = new AppUpdater(this);
-        updater.setUpdateFrom(UpdateFrom.JSON);
-        updater.setUpdateJSON("https://raw.githubusercontent.com/nathanww/wearable-ld/master/version.json");
-        updater.start();
+
         //keep the cpu on
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
