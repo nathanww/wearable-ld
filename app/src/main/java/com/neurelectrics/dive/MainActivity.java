@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "Dive::DataAcquistion");
         wakeLock.acquire();
-
+        wakeupHandler(); //start a loop to keep the device active
         //set up the lucid music
         lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.eno1fade);
         lucidMusic.setVolume(1.0f,1.0f);
@@ -257,6 +257,23 @@ public class MainActivity extends AppCompatActivity {
             startActivity(launchIntent);//null pointer check in case package name was not found
         }
 
+    }
+
+    void wakeupHandler() { //turn the screen on (if turned off) during recording period to improve acquistion reliability. Also checks the connection status and tries to reset thje connection if ti appears broken
+        final Handler wakeuptimer = new Handler();
+        Runnable runnableCode = new Runnable() {
+            @Override
+            public void run() {
+                PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+                Log.i("Dive","wakeup");
+                PowerManager.WakeLock powerOn = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "Dive:poweron");
+                powerOn.acquire();
+                powerOn.release();
+                wakeuptimer.postDelayed(this, 60000);
+
+            }
+        };
+        runnableCode.run();
     }
     void handleTrainingSounds() { //handle the repeating cues during training with different inter stimulus intervals
         if (trainingEpochs == delayTimes[delayItem]+STIMULUS_LENGTH) { //we have to add the length of the stimulus because this track the onset time, not the ffset time
