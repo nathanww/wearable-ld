@@ -416,7 +416,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             }
-                return(System.currentTimeMillis()+","+hr+","+motionX+","+motionY+","+motionZ+","+gyrox+","+gyroy+","+gyroz+","+s3Prob+","+avgProb+","+cueRunning+","+cueVolume+","+(elapsedTime));
+                return("time:"+System.currentTimeMillis()+",hr:"+hr+",xa:"+motionX+",ya:"+motionY+",za:"+motionZ+",xg"+gyrox+",yg"+gyroy+",zg"+gyroz+",is3:"+s3Prob+",is3avg:"+avgProb+",cueing:"+cueRunning+",vol:"+cueVolume+",elapsed:"+(elapsedTime));
 
             } //no stage info available
             else {
