@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         wakeLock.acquire();
         wakeupHandler(); //start a loop to keep the device active
         //set up the lucid music
-        lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.eno1fade);
+        lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.twobeeps);
         lucidMusic.setVolume(1.0f,1.0f);
         //start the Fitbit server
         server = new fitbitServer();
@@ -362,13 +362,13 @@ public class MainActivity extends AppCompatActivity {
                         isArousal=true;
                         lastArousal=elapsedTime;
 
-                        float arousalSum=sharedPref.getFloat("arousalSum",0);
-                        int arousalN=sharedPref.getInt("arousalN",0);
+                        float arousalSum=sharedPref.getFloat("arousalSum2",0);
+                        int arousalN=sharedPref.getInt("arousalN2",0);
                         if (arousalN < 4) {
                             arousalN++;
                             arousalSum = arousalSum + cueVolume;
-                            editor.putFloat("arousalSum", arousalSum);
-                            editor.putInt("arousalN", arousalN);
+                            editor.putFloat("arousalSum2", arousalSum);
+                            editor.putInt("arousalN2", arousalN);
                             editor.commit();
                         }
                         cueVolume=0;
@@ -385,7 +385,7 @@ public class MainActivity extends AppCompatActivity {
 
                         if (!cueRunning) {
                             cueRunning=true;
-                            lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.eno1fade);
+                            lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.twobeeps);
                             lucidMusic.setVolume(cueVolume,cueVolume);
                             lucidMusic.setLooping(true);
                             lucidMusic.start();
@@ -402,8 +402,8 @@ public class MainActivity extends AppCompatActivity {
                 if (cueRunning) { //if the cueing is running, start incrementing the volume
                     cueVolume = cueVolume + CUE_VOLUME_INC;
                     //check to see if we've recorded enough arousals to set a volume cap. If we have, make sure the volume doesn't exceed the cap
-                    float arousalSum = sharedPref.getFloat("arousalSum", 0);
-                    int arousalN = sharedPref.getInt("arousalN", 0);
+                    float arousalSum = sharedPref.getFloat("arousalSum2", 0);
+                    int arousalN = sharedPref.getInt("arousalN2", 0);
                     if (arousalN >= 4) {
                         float meanThresh = (arousalSum / arousalN) * 0.75f;
                         if (cueVolume > meanThresh) {
