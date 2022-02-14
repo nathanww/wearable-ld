@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FitbitTest">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="222dp"
+        tools:layout_editor_absoluteY="131dp">
+
+        <TextView
+            android:id="@+id/fitbitHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="25sp"
+            tools:text="Connect your Fitbit" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This app requires a companion app to be installed and running on your Fitbit to detect REM sleep. If you haven't already installed it, tap the button below to install the Dream app.\n\nNote that this app is only compatible with the Fitbit Versa (original) and Fitbit Sense" />
+
+        <Button
+            android:id="@+id/fitbitInstall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Go to Fitbit gallery" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text='After the app is installed,sstart it on your Fitbit and tap the "Connect Fitbit" button' />
+
+        <Button
+            android:id="@+id/connectButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
