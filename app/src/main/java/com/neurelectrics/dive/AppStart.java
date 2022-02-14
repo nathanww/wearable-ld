@@ -28,12 +28,11 @@ public class AppStart extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_start);
-        checkStatus();
     }
 
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+public  void onResume() {
+        super.onResume();
         checkStatus();
     }
 }

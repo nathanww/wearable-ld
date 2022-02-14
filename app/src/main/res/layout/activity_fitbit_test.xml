@@ -13,42 +13,65 @@
         tools:layout_editor_absoluteX="222dp"
         tools:layout_editor_absoluteY="131dp">
 
-        <TextView
-            android:id="@+id/fitbitHeader"
+        <LinearLayout
+            android:id="@+id/instructions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textSize="25sp"
-            tools:text="Connect your Fitbit" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Connect your Fitbit"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="This app requires a companion app to be installed and running on your Fitbit to detect REM sleep. If you haven't already installed it, tap the button below to install the Dream app.\n\nNote that this app is only compatible with the Fitbit Versa (original) and Fitbit Sense" />
+
+            <Button
+                android:id="@+id/fitbitInstall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Install app from Fitbit gallery" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text='After the app is installed,start it on your Fitbit and tap the "Connect Fitbit" button' />
+
+            <Button
+                android:id="@+id/connectButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Connect Fitbit" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/connectionIssue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="This app requires a companion app to be installed and running on your Fitbit to detect REM sleep. If you haven't already installed it, tap the button below to install the Dream app.\n\nNote that this app is only compatible with the Fitbit Versa (original) and Fitbit Sense" />
-
-        <Button
-            android:id="@+id/fitbitInstall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Go to Fitbit gallery" />
+            android:text="⚠ Could not connect to Fitbit\n *Check thatthe Fitbit app is installed and running.\n*Try syncing the Fitbit\n*If you just installed the app, try rebooting the Fitbit"
+            android:visibility="gone" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/fitbitConnected"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text='After the app is installed,sstart it on your Fitbit and tap the "Connect Fitbit" button' />
-
-        <Button
-            android:id="@+id/connectButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="✔ Fitbit connected"
+            android:textSize="20sp"
+            android:visibility="gone" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/fitbitInstructions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="You'll need to start the Dream app on your Fitbit before you go to sleep, but you can exit it now."
+            android:visibility="gone" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
