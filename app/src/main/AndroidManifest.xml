@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Dive">
-        <activity android:name=".FitbitTest"></activity>
+        <activity android:name=".sleepQuestion"></activity>
+        <activity android:name=".FitbitTest" />
         <activity android:name=".ConsentActivity" />
         <activity
             android:name=".AppStart"
