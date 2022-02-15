@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     float oldx,oldy,oldz=0; //variables to detect sudden motion
     float MOTION_THRESH=5f; //how much motion is considered an arousal
-    float ONSET_THRESH=0.95f; //how high does the rem probability have to be to trigger cueing?
+    float ONSET_THRESH=0.99f; //how high does the rem probability have to be to trigger cueing?
     float cueVolume=0.0f;
     float CUE_VOLUME_INC=0.00075f; //how much does the cue volume increase ach second?
     int BUFFER_SIZE=60; //HOW MANY TO AVERAGE?
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     boolean cueRunning=false;
 
-    int ONSET_TIME=14400; //minimum time the app must be running before it will cue
+    int ONSET_TIME=900; //minimum time the app must be running before it will cue
     int BACKOFF_TIME=600;
     int elapsedTime=0;
     int lastArousal=(0-BACKOFF_TIME);
@@ -342,11 +342,8 @@ public class MainActivity extends AppCompatActivity {
                 float gyrox=Float.parseFloat(stageData.split(":")[5].split(",")[0]);
                 float gyroy=Float.parseFloat(stageData.split(":")[6].split(",")[0]);
                 float gyroz=Float.parseFloat(stageData.split(":")[7].split(",")[0]);
-                probBuffer.add(s3Prob);
-                if (probBuffer.size() > BUFFER_SIZE) {
-                    probBuffer.remove(0);
-                }
-                float avgProb=average(probBuffer);
+
+                float avgProb=s3Prob;
 
 
 
