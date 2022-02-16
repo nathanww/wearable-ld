@@ -361,13 +361,6 @@ public class MainActivity extends AppCompatActivity {
 
                         float arousalSum=sharedPref.getFloat("arousalSum2",0);
                         int arousalN=sharedPref.getInt("arousalN2",0);
-                        if (arousalN < 4) {
-                            arousalN++;
-                            arousalSum = arousalSum + cueVolume;
-                            editor.putFloat("arousalSum2", arousalSum);
-                            editor.putInt("arousalN2", arousalN);
-                            editor.commit();
-                        }
                         cueVolume=0;
                     }
                     oldx=motionX;
@@ -401,13 +394,7 @@ public class MainActivity extends AppCompatActivity {
                     //check to see if we've recorded enough arousals to set a volume cap. If we have, make sure the volume doesn't exceed the cap
                     float arousalSum = sharedPref.getFloat("arousalSum2", 0);
                     int arousalN = sharedPref.getInt("arousalN2", 0);
-                    if (arousalN >= 4) {
-                        float meanThresh = (arousalSum / arousalN) * 0.75f;
-                        if (cueVolume > meanThresh) {
-                            cueVolume = meanThresh;
-                            Log.i("volume", "capped at " + meanThresh);
-                        }
-                    }
+
                     maximizeVolume(); //override any volume adjustments
                     lucidMusic.setVolume(cueVolume, cueVolume);
 
