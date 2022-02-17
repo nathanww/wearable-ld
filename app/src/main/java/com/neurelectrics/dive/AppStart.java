@@ -14,6 +14,7 @@ public class AppStart extends AppCompatActivity {
 
 
         int taskStatus = sharedPref.getInt("taskStatus", 0); //get where we are in the experiment
+        taskStatus=2;
         Log.i("task status",""+taskStatus);
         if (taskStatus == 0) { //consent form has not been filled out
             Intent getConsent = new Intent(this, ConsentActivity.class);
@@ -22,6 +23,10 @@ public class AppStart extends AppCompatActivity {
         if (taskStatus == 1) { //consent form has not been filled out
             Intent testFitbit = new Intent(this, FitbitTest.class);
             startActivity(testFitbit); //consent is important
+        }
+        if (taskStatus == 2) { //consent form has not been filled out
+            Intent sleepQ = new Intent(this, sleepQuestion.class);
+            startActivity(sleepQ);
         }
     }
     @Override
