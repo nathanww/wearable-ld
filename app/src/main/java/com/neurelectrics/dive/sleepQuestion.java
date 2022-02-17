@@ -82,9 +82,9 @@ public class sleepQuestion extends AppCompatActivity {
                 if (url.indexOf("google.com") > -1) {
                     Log.i("squrl",url);
                     Log.i("sq","complete");
-                    /*
-                    editor.putInt("taskStatus",1);
-                    editor.commit();*/
+
+                    editor.putInt("taskStatus",3);
+                    editor.commit();
                     finish();
                 }
             }
