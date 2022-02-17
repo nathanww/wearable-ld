@@ -399,6 +399,10 @@ public class MainActivity extends AppCompatActivity {
                             cueRunning=false;
                         }
                     }
+                    else if (avgProb < ONSET_THRESH) {
+                        lucidMusic.stop();
+                        cueRunning=false;
+                }
                 if (cueRunning) { //if the cueing is running, start incrementing the volume
                     cueVolume = cueVolume + CUE_VOLUME_INC;
                     //check to see if we've recorded enough arousals to set a volume cap. If we have, make sure the volume doesn't exceed the cap
