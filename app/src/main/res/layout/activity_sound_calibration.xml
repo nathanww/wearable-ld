@@ -29,5 +29,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Start" />
+
+        <Button
+            android:id="@+id/heardSoundButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="I hear a sound"
+            android:visibility="gone" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
