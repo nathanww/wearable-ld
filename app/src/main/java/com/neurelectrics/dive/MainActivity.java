@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     boolean cueRunning=false;
 
-    int ONSET_TIME=14400; //minimum time the app must be running before it will cue
+    int ONSET_TIME=10800; //minimum time the app must be running before it will cue
     int BACKOFF_TIME=600;
     int elapsedTime=0;
     int lastArousal=(0-BACKOFF_TIME);
@@ -351,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 boolean isArousal=false;
-            if (elapsedTime >= ONSET_TIME) {
+            if (elapsedTime <= ONSET_TIME) {
                 Log.i("cuedata","point1");
 
 
@@ -380,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.i("cuedata",elapsedTime+","+lastArousal+","+(elapsedTime-lastArousal)+","+BACKOFF_TIME);
                     //if (avgProb >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME) { //conditions are good for cueing
-                if (avgProb >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
+                if (avgProb >= ONSET_THRESH && elapsedTime <= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
                     Log.i("cuedata","point2");
 
                         if (!cueRunning) {
