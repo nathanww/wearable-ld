@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     boolean cueRunning=false;
 
-    int ONSET_TIME=14400; //minimum time the app must be running before it will cue
+    int ONSET_TIME=19800; //minimum time the app must be running before it will cue
     int BACKOFF_TIME=600;
     int elapsedTime=0;
     int lastArousal=(0-BACKOFF_TIME);
@@ -362,13 +362,13 @@ public class MainActivity extends AppCompatActivity {
                         isArousal=true;
                         lastArousal=elapsedTime;
 
-                        float arousalSum=sharedPref.getFloat("arousalSum2",0);
-                        int arousalN=sharedPref.getInt("arousalN2",0);
+                        float arousalSum=sharedPref.getFloat("arousalSum3",0);
+                        int arousalN=sharedPref.getInt("arousalN3",0);
                         if (arousalN < 4) {
                             arousalN++;
                             arousalSum = arousalSum + cueVolume;
-                            editor.putFloat("arousalSum2", arousalSum);
-                            editor.putInt("arousalN2", arousalN);
+                            editor.putFloat("arousalSum3", arousalSum);
+                            editor.putInt("arousalN3", arousalN);
                             editor.commit();
                         }
                         cueVolume=0;
@@ -402,8 +402,8 @@ public class MainActivity extends AppCompatActivity {
                 if (cueRunning) { //if the cueing is running, start incrementing the volume
                     cueVolume = cueVolume + CUE_VOLUME_INC;
                     //check to see if we've recorded enough arousals to set a volume cap. If we have, make sure the volume doesn't exceed the cap
-                    float arousalSum = sharedPref.getFloat("arousalSum2", 0);
-                    int arousalN = sharedPref.getInt("arousalN2", 0);
+                    float arousalSum = sharedPref.getFloat("arousalSum3", 0);
+                    int arousalN = sharedPref.getInt("arousalN3", 0);
                     if (arousalN >= 4) {
                         float meanThresh = (arousalSum / arousalN) * 0.75f;
                         if (cueVolume > meanThresh) {
