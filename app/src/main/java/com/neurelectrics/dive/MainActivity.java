@@ -140,26 +140,7 @@ public class MainActivity extends AppCompatActivity {
         editor=sharedPref.edit();
 
 
-        //set up the username field
-        EditText userID=(EditText) findViewById(R.id.userID);
-        userID.setText(sharedPref.getString("userID","DEFAULT"));
-        userID.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                editor.putString("userID",""+s);
-                editor.apply();
-            }
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
         Button stopButton = (Button) findViewById(R.id.stopButton);
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,9 +154,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startButton.setVisibility(View.GONE);
-                userID.setVisibility(View.GONE);
-                TextView prompt=(TextView)  findViewById(R.id.userPrompt);
-                prompt.setVisibility(View.GONE);
                 TextView instr=(TextView)  findViewById(R.id.appRunningHeader);
                 instr.setVisibility(View.VISIBLE);
                 stopButton.setVisibility(View.VISIBLE);

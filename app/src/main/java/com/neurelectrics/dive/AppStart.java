@@ -14,7 +14,7 @@ public class AppStart extends AppCompatActivity {
 
 
         int taskStatus = sharedPref.getInt("taskStatus", 0); //get where we are in the experiment
-        taskStatus=0;
+        taskStatus=3;
         Log.i("task status",""+taskStatus);
         if (taskStatus == 0) { //consent form has not been filled out
             Intent getConsent = new Intent(this, ConsentActivity.class);
@@ -27,6 +27,11 @@ public class AppStart extends AppCompatActivity {
         if (taskStatus == 2) { //consent form has not been filled out
             Intent sleepQ = new Intent(this, sleepQuestion.class);
             startActivity(sleepQ);
+        }
+
+        if (taskStatus == 3) { //sound claibration
+            Intent soundCal = new Intent(this, SoundCalibration.class);
+            startActivity(soundCal);
         }
     }
     @Override

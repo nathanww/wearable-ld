@@ -10,6 +10,14 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start sleep"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp" />
+
+    <TextView
         android:id="@+id/connectionWarning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,25 +26,17 @@
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/userPrompt"
-        android:layout_width="69dp"
-        android:layout_height="25dp"
-        android:text="User ID"
-        android:textColor="#FFFFFF" />
-
-    <EditText
-        android:id="@+id/userID"
-        android:layout_width="wrap_content"
+        android:id="@+id/textView6"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
+        android:text="Tap the button below when you're ready to go to bed. The app will first lead you through a short meditation designed to help you become lucid while you sleep. After that, it will start monitoring your sleep, and play the lucidity signal when you're dreaming!"
         android:textColor="#FFFFFF" />
 
     <Button
         android:id="@+id/startButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start dreaming!" />
+        android:text="Start!" />
 
     <TextView
         android:id="@+id/appRunningHeader"

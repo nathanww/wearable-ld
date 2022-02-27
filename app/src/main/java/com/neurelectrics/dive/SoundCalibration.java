@@ -2,8 +2,11 @@ package com.neurelectrics.dive;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 
@@ -16,7 +19,8 @@ public class SoundCalibration extends AppCompatActivity {
     MediaPlayer sound1;
     MediaPlayer sound2;
     Timer soundTimer;
-
+    float soundVolume=0.0f;
+    boolean runSound=true;
     void escalateSound(MediaPlayer inputSound) {
         soundTimer=new Timer();
         soundTimer.schedule(new TimerTask() {
@@ -34,9 +38,7 @@ public class SoundCalibration extends AppCompatActivity {
 
         //set up the sound files
         training1= MediaPlayer.create(SoundCalibration.this,R.raw.soundcheck1);
-        training2= MediaPlayer.create(SoundCalibration.this,R.raw.soundcheck2);
         sound1= MediaPlayer.create(SoundCalibration.this,R.raw.twobeeps);
-        sound2= MediaPlayer.create(SoundCalibration.this,R.raw.threebeeps);
 
 
         Button calStart = (Button) findViewById(R.id.calStart);
@@ -53,7 +55,14 @@ public class SoundCalibration extends AppCompatActivity {
         soundHeard.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-
+                                            runSound=false;
+                                            sound1.stop();
+                                            SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor editor = sharedPref.edit();
+                                            editor.putFloat("wakeSoundThresh",soundVolume);
+                                            editor.putInt("taskStatus",4);
+                                            editor.commit();
+                                            finish();
                                         }
                                     }
         );
@@ -63,7 +72,17 @@ public class SoundCalibration extends AppCompatActivity {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 soundHeard.setVisibility(View.VISIBLE);
-
+                final Handler soundloop = new Handler();
+                soundloop.postDelayed(new Runnable() { //start playing the training sound at 10-s intervals
+                    public void run() {
+                        if (runSound) {
+                            sound1.setVolume(soundVolume, soundVolume);
+                            sound1.start();
+                            soundVolume = soundVolume + 0.005f;
+                            soundloop.postDelayed(this, 10000);
+                        }
+                    }
+                }, 10000);
             }
         });
     }
