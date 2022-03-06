@@ -59,6 +59,10 @@ public class MainActivity extends AppCompatActivity {
     Timer trainingTimer;
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
+
+    boolean firstTraining=true;
+    float sleepVolume=0;
+
     float oldx,oldy,oldz=0; //variables to detect sudden motion
     float MOTION_THRESH=5f; //how much motion is considered an arousal
     float ONSET_THRESH=0.95f; //how high does the rem probability have to be to trigger cueing?
@@ -79,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     int[] delayTimes={0,45,45,45,45,70,55,65,70,80,65,60,75,75,90,120};
-    int STIMULUS_LENGTH=73;  //how long is the cue sound? THis  prevents issues with it overlapping
+    int STIMULUS_LENGTH=20;  //how long is the cue sound? THis  prevents issues with it overlapping
     int delayItem=0;
     int trainingEpochs=0; //one training epoch is 1 seconds, this is used to control the timing during training
     double lastPacket=System.currentTimeMillis();
@@ -98,26 +102,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        AppUpdateManager appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
-// Returns an intent object that you use to check for an update.
-        Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
-// Checks that the platform will allow the specified type of update.
-        appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
-                try {
-                    appUpdateManager.startUpdateFlowForResult(
-                            appUpdateInfo,
-                            AppUpdateType.FLEXIBLE,
-                            this,
-                            1);
-                }
-                catch (Exception e) {
-
-                }
-
-            }
-        });
-
 
         //keep the cpu on
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
@@ -136,10 +120,10 @@ public class MainActivity extends AppCompatActivity {
             Log.e("Httpd", ioe.getMessage());
         }
         Log.w("Httpd", "Web server initialized.");
-        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        editor=sharedPref.edit();
-
-
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        //get the training status--have we done the training before?
+        firstTraining=sharedPref.getBoolean("initialTrainingComplete",false);
 
         Button stopButton = (Button) findViewById(R.id.stopButton);
         stopButton.setOnClickListener(new View.OnClickListener() {

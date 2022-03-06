@@ -14,15 +14,15 @@ public class AppStart extends AppCompatActivity {
 
 
         int taskStatus = sharedPref.getInt("taskStatus", 0); //get where we are in the experiment
-        taskStatus=3;
+        taskStatus=4;
         Log.i("task status",""+taskStatus);
         if (taskStatus == 0) { //consent form has not been filled out
             Intent getConsent = new Intent(this, ConsentActivity.class);
             startActivity(getConsent); //consent is important
         }
-        if (taskStatus == 1) { //consent form has not been filled out
+        if (taskStatus == 1) { //connect fitbit
             Intent testFitbit = new Intent(this, FitbitTest.class);
-            startActivity(testFitbit); //consent is important
+            startActivity(testFitbit);
         }
         if (taskStatus == 2) { //consent form has not been filled out
             Intent sleepQ = new Intent(this, sleepQuestion.class);
@@ -32,6 +32,10 @@ public class AppStart extends AppCompatActivity {
         if (taskStatus == 3) { //sound claibration
             Intent soundCal = new Intent(this, SoundCalibration.class);
             startActivity(soundCal);
+        }
+        if (taskStatus == 4) { //training and sleep
+            Intent startSleep = new Intent(this, MainActivity.class);
+            startActivity(startSleep);
         }
     }
     @Override
