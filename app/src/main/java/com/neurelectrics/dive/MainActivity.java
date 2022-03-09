@@ -125,7 +125,8 @@ public class MainActivity extends AppCompatActivity {
         //get the training status--have we done the training before?
         firstTraining=sharedPref.getBoolean("initialTrainingComplete",false);
 
-        Button stopButton = (Button) findViewById(R.id.stopButton);
+        Button stopButton = (Button) findViewById(R.id.reportButton);
+        Button abortButton = (Button) findViewById(R.id.abortButton);
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,9 +139,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startButton.setVisibility(View.GONE);
+                abortButton.setVisibility(View.VISIBLE);
                 TextView instr=(TextView)  findViewById(R.id.appRunningHeader);
                 instr.setVisibility(View.VISIBLE);
-                stopButton.setVisibility(View.VISIBLE);
+                TextView startInstructions=(TextView)  findViewById(R.id.startInstructions);
+                startInstructions.setVisibility(GONE);
+                TextView header=(TextView)  findViewById(R.id.header);
+                header.setVisibility(GONE);
+                Button stopButton = (Button) findViewById(R.id.reportButton);
                 startTraining= MediaPlayer.create(MainActivity.this,R.raw.training1);
                 training2= MediaPlayer.create(MainActivity.this,R.raw.training2);
 
@@ -248,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
             if (delayItem < delayTimes.length-1) {
                 delayItem++;
             }
-            else {
+            else { //we have reached the end of the training sequence!
                 trainingTimer.cancel();
                 trainingTimer.purge();
             }

@@ -17,6 +17,7 @@
         <activity android:name=".sleepQuestion" />
         <activity android:name=".FitbitTest" />
         <activity android:name=".ConsentActivity" />
+        <activity android:name=".MainActivity" />
         <activity
             android:name=".AppStart"
             android:screenOrientation="portrait">

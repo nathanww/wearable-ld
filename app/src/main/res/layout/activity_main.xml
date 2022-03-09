@@ -26,7 +26,7 @@
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/startInstructions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Tap the button below when you're ready to go to bed. The app will first lead you through a short meditation designed to help you become lucid while you sleep. After that, it will start monitoring your sleep, and play the lucidity signal when you're dreaming!"
@@ -42,15 +42,32 @@
         android:id="@+id/appRunningHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="App is running. Enjoy your dreams! \n\n Keep your phone's screen on and keep the phone plugged in.\n\n If you're woken by the sound, you can stop it by moving your wrist. To exit the app completely, tap the button below."
-        android:textColor="#FFFCFC"
-        android:textSize="22sp"
+        android:text="App is running! Enjoy your dreams!"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/wakeHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Are you awake?"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
         android:visibility="gone" />
 
     <Button
-        android:id="@+id/stopButton"
+        android:id="@+id/reportButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Exit"
+        android:text="I'm awake"
         android:visibility="gone" />
+
+    <Button
+        android:id="@+id/abortButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop"
+        android:visibility="gone" />
+
 </LinearLayout>
