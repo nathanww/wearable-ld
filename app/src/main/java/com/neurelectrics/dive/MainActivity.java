@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
     float oldx,oldy,oldz=0; //variables to detect sudden motion
-    float MOTION_THRESH=5f; //how much motion is considered an arousal
+    float MOTION_THRESH=7f; //how much motion is considered an arousal
     float ONSET_THRESH=0.95f; //how high does the rem probability have to be to trigger cueing?
     float cueVolume=0.0f;
     float CUE_VOLUME_INC=0.00075f; //how much does the cue volume increase ach second?
