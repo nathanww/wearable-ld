@@ -51,7 +51,7 @@
         android:id="@+id/wakeHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Are you awake?"
+        android:text="Tap the button below when you're awake."
         android:textColor="#FFFFFF"
         android:textSize="30sp"
         android:visibility="gone" />

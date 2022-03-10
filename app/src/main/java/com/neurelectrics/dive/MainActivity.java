@@ -32,6 +32,7 @@ import com.google.android.play.core.tasks.Task;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
     boolean firstTraining=true;
     float sleepVolume=0;
-
+    boolean enableSleepCueing=false;
     float oldx,oldy,oldz=0; //variables to detect sudden motion
     float MOTION_THRESH=5f; //how much motion is considered an arousal
     float ONSET_THRESH=0.95f; //how high does the rem probability have to be to trigger cueing?
@@ -123,11 +124,11 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         //get the training status--have we done the training before?
-        firstTraining=sharedPref.getBoolean("initialTrainingComplete",false);
+        firstTraining=sharedPref.getBoolean("firstTraining",true);
 
         Button stopButton = (Button) findViewById(R.id.reportButton);
         Button abortButton = (Button) findViewById(R.id.abortButton);
-        stopButton.setOnClickListener(new View.OnClickListener() {
+        abortButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 System.exit(0);
@@ -138,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                firstTraining=false;
                 startButton.setVisibility(View.GONE);
                 abortButton.setVisibility(View.VISIBLE);
                 TextView instr=(TextView)  findViewById(R.id.appRunningHeader);
@@ -146,9 +148,16 @@ public class MainActivity extends AppCompatActivity {
                 startInstructions.setVisibility(GONE);
                 TextView header=(TextView)  findViewById(R.id.header);
                 header.setVisibility(GONE);
-                Button stopButton = (Button) findViewById(R.id.reportButton);
-                startTraining= MediaPlayer.create(MainActivity.this,R.raw.training1);
-                training2= MediaPlayer.create(MainActivity.this,R.raw.training2);
+                if (firstTraining) {
+                    startTraining = MediaPlayer.create(MainActivity.this, R.raw.training1);
+                    training2= MediaPlayer.create(MainActivity.this,R.raw.training2);
+                }
+                else {
+                    startTraining = MediaPlayer.create(MainActivity.this, R.raw.experimental);
+                    training2= MediaPlayer.create(MainActivity.this,R.raw.blank);
+
+                }
+
 
                 lucidMusic.setLooping(false);
 
@@ -159,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                 signalcue.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //if delay item is 4, meaning we just played the instructions for the fourth time, then start the cues without guidance
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        if (delayItem==4) {
+                        if (delayItem==4 || (!firstTraining && delayItem == 1)) {
                             noguidance.start();
                         }
                     }
@@ -167,6 +176,8 @@ public class MainActivity extends AppCompatActivity {
                 startTraining.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //when the first part of the instrutionas are complete, star tthe second part
                     @Override
                     public void onCompletion(MediaPlayer mp) {
+
+                        switchToSleepMode();
                         training2.start();
                     }
                 });
@@ -243,6 +254,29 @@ public class MainActivity extends AppCompatActivity {
         };
         runnableCode.run();
     }
+    void switchToSleepMode() {
+        runOnUiThread (new Thread(new Runnable() {
+            public void run() {
+                Button abortButton = (Button) findViewById(R.id.abortButton);
+                abortButton.setVisibility(GONE);
+                Button stopButton = (Button) findViewById(R.id.reportButton);
+                stopButton.setVisibility(View.VISIBLE);
+                TextView runningHeader=(TextView)findViewById(R.id.appRunningHeader);
+                runningHeader.setVisibility(GONE);
+                TextView wakeHeader=(TextView)findViewById(R.id.wakeHeader);
+                wakeHeader.setVisibility(View.VISIBLE);
+
+            }
+        }));
+
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean("firstTraining",false);
+        editor.commit();
+        enableSleepCueing=true;
+
+
+    }
     void handleTrainingSounds() { //handle the repeating cues during training with different inter stimulus intervals
         if (trainingEpochs == delayTimes[delayItem]+STIMULUS_LENGTH) { //we have to add the length of the stimulus because this track the onset time, not the ffset time
 
@@ -257,6 +291,8 @@ public class MainActivity extends AppCompatActivity {
             else { //we have reached the end of the training sequence!
                 trainingTimer.cancel();
                 trainingTimer.purge();
+                //switch from training mode to sleep mode
+                switchToSleepMode();
             }
             Log.i("cycle","start");
 
@@ -348,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.i("cuedata",elapsedTime+","+lastArousal+","+(elapsedTime-lastArousal)+","+BACKOFF_TIME);
                     //if (avgProb >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME) { //conditions are good for cueing
-                if (avgProb >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
+                if (avgProb >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
                     Log.i("cuedata","point2");
 
                         if (!cueRunning) {
@@ -360,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                     }
-                    else if (elapsedTime-lastArousal < BACKOFF_TIME){ //arousal, stop the cues as needed
+                    else if (elapsedTime-lastArousal < BACKOFF_TIME || !enableSleepCueing){ //arousal, stop the cues as needed
 
                         if (cueRunning) {
                             lucidMusic.stop();
