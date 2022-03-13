@@ -373,10 +373,15 @@ public class MainActivity extends AppCompatActivity {
                         }
                         cueVolume=0;
                     }
+
                     oldx=motionX;
                     oldy=motionY;
                     oldz=motionZ;
-
+                if (cueRunning && avgProb < 0.5) {
+                    isArousal = true;
+                    lastArousal = elapsedTime;
+                    cueVolume = 0;
+                }
 
                 Log.i("cuedata",elapsedTime+","+lastArousal+","+(elapsedTime-lastArousal)+","+BACKOFF_TIME);
                     //if (avgProb >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME) { //conditions are good for cueing
