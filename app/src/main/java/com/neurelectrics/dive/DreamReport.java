@@ -63,7 +63,7 @@ public class DreamReport extends AppCompatActivity {
         //get the participant ID if it exists, if not generate a new one
         int pid=sharedPref.getInt("pid",-1);
 
-        String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6FCssjBFQNC95j0?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getString("pType","unassigned"+"&night="+sharedPref.getInt("currentNight",-1)+"&arousal="+sharedPref.getInt("arousalSum2",-1)+":"+sharedPref.getInt("arousalN2",-1));
+        String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6FCssjBFQNC95j0?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getString("pType","unassigned"+"&night="+sharedPref.getInt("currentNight",-1)+"&arousal="+sharedPref.getInt("arousalSum2",-1)+":"+sharedPref.getInt("arousalN2",-1)+"&sleepdata="+sharedPref.getString("sleepdata",""));
         WebView wv = (WebView) findViewById(R.id.reportView);
         wv.loadUrl(pageTarget);
         WebSettings webSettings = wv.getSettings();
