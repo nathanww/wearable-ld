@@ -16,6 +16,9 @@ import android.webkit.WebViewClient;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class DreamReport extends AppCompatActivity {
 
@@ -26,6 +29,8 @@ public class DreamReport extends AppCompatActivity {
             Socket sock = new Socket();
             sock.connect(new InetSocketAddress("8.8.8.8", 53), 1500);
             sock.close();
+
+
             return true;
         } catch (IOException e) { return false; }
     }
@@ -59,9 +64,24 @@ public class DreamReport extends AppCompatActivity {
         if (!checkInternet()) {
             connectionAlert();
         }
+        else { //if the internet is working, send the sleep data to IFTTT/google
+            try {
+                int pid=sharedPref.getInt("pid",-1);
+
+                String urlString = "https://maker.ifttt.com/trigger/luciddata/with/key/kYjllPFEGolhZUDSPQsFRHxRPr7pZgSixnXCVM8UDIR?value1="+pid+"&value2="+sharedPref.getInt("currentNight",-1)+"&value3="+sharedPref.getString("sleepdata","");
+                URL url = new URL(urlString);
+                url.openStream();
+                editor.putString("sleepdata","");
+            } catch (Exception e) {
+                Log.e("telemetry", "error");
+                e.printStackTrace();
+            }
+        }
         Log.i("Dream report","Starting dream report");
         //get the participant ID if it exists, if not generate a new one
         int pid=sharedPref.getInt("pid",-1);
+
+        //send the sleep data to ifttt
 
         String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6FCssjBFQNC95j0?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getString("pType","unassigned"+"&night="+sharedPref.getInt("currentNight",-1)+"&arousal="+sharedPref.getInt("arousalSum2",-1)+":"+sharedPref.getInt("arousalN2",-1)+"&sleepdata="+sharedPref.getString("sleepdata",""));
         WebView wv = (WebView) findViewById(R.id.reportView);
@@ -82,6 +102,7 @@ public class DreamReport extends AppCompatActivity {
                 }
             }
         });
+
 
     }
 }
