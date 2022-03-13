@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     float sleepVolume=0;
     boolean enableSleepCueing=false;
     float oldx,oldy,oldz=0; //variables to detect sudden motion
-    float MOTION_THRESH=5f; //how much motion is considered an arousal
+    float MOTION_THRESH=7f; //how much motion is considered an arousal
     float ONSET_THRESH=0.95f; //how high does the rem probability have to be to trigger cueing?
     float cueVolume=0.0f;
     float CUE_VOLUME_INC=0.00075f; //how much does the cue volume increase ach second?
@@ -255,12 +255,23 @@ public class MainActivity extends AppCompatActivity {
         runnableCode.run();
     }
     void switchToSleepMode() {
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
         runOnUiThread (new Thread(new Runnable() {
             public void run() {
                 Button abortButton = (Button) findViewById(R.id.abortButton);
                 abortButton.setVisibility(GONE);
                 Button stopButton = (Button) findViewById(R.id.reportButton);
                 stopButton.setVisibility(View.VISIBLE);
+                stopButton.setOnClickListener(new View.OnClickListener() {
+                                                   @Override
+                                                   public void onClick(View v) {
+                                                    editor.putInt("taskStatus",5);
+                                                    editor.commit();
+                                                    finish();
+                                                   }
+                                               }
+                );
                 TextView runningHeader=(TextView)findViewById(R.id.appRunningHeader);
                 runningHeader.setVisibility(GONE);
                 TextView wakeHeader=(TextView)findViewById(R.id.wakeHeader);
@@ -269,8 +280,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }));
 
-        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
+
         editor.putBoolean("firstTraining",false);
         editor.commit();
         enableSleepCueing=true;
@@ -308,20 +318,11 @@ public class MainActivity extends AppCompatActivity {
 
     //fitbitServer handles getting data from the fitbit which sends it on port 8085
     private class fitbitServer extends NanoHTTPD {
-        FileWriter fileWriter;
-        PrintWriter printWriter;
 
         public fitbitServer() {
             super(8085);
             Log.i("fitbit", "server start");
-            try {
-                fileWriter = new FileWriter(getApplicationContext().getExternalFilesDir(null) + "/fitbitdata.txt", true);
-                Log.i("filedir",getApplicationContext().getExternalFilesDir(null)+"");
-                printWriter = new PrintWriter(fileWriter);
-            }
-            catch (Exception e) {
-                Log.e("Server","Error opening file");
-            }
+
 
         }
 
@@ -441,17 +442,8 @@ public class MainActivity extends AppCompatActivity {
                 String result=handleStaging(parameters.toString());
                 Log.i("cuedata",result);
                 String temp=parameters.toString()+","+result+"\n";
-                printWriter.print(temp);
-                printWriter.flush();
-                //how send telemetry
-                try {
-                    String urlString = "https://biostream-1024.appspot.com/sendps?"+"user=" + sharedPref.getString("userID","DEFAULT") + "&data=" + URLEncoder.encode(result, StandardCharsets.UTF_8.toString());
-                    URL url = new URL(urlString);
-                    url.openStream();
-                } catch (Exception e) {
-                    Log.e("telemetry", "error");
-                    e.printStackTrace();
-                }
+
+
 
             }
             return newFixedLengthResponse(Response.Status.OK, "normal", "");
