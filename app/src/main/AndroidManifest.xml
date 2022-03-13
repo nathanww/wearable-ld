@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Dive">
-        <activity android:name=".SoundCalibration"></activity>
+        <activity android:name=".DreamReport"></activity>
+        <activity android:name=".SoundCalibration" />
         <activity android:name=".sleepQuestion" />
         <activity android:name=".FitbitTest" />
         <activity android:name=".ConsentActivity" />

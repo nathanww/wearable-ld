@@ -267,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
                                                    @Override
                                                    public void onClick(View v) {
                                                     editor.putInt("taskStatus",5);
+
                                                     editor.commit();
                                                     finish();
                                                    }
@@ -405,11 +406,14 @@ public class MainActivity extends AppCompatActivity {
                             cueRunning=false;
                         }
                     }
-                if (cueRunning) { //if the cueing is running, start incrementing the volume
+                if (cueRunning) { //if the cueing is running, start incrementing the
+                    editor.putFloat("highestVol",cueVolume);
+                    editor.apply();
                     cueVolume = cueVolume + CUE_VOLUME_INC;
                     //check to see if we've recorded enough arousals to set a volume cap. If we have, make sure the volume doesn't exceed the cap
                     float arousalSum = sharedPref.getFloat("arousalSum2", 0);
                     int arousalN = sharedPref.getInt("arousalN2", 0);
+
                     if (arousalN >= 4) {
                         float meanThresh = (arousalSum / arousalN) * 0.75f;
                         if (cueVolume > meanThresh) {
