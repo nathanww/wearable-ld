@@ -318,12 +318,13 @@ public class MainActivity extends AppCompatActivity {
 
     //fitbitServer handles getting data from the fitbit which sends it on port 8085
     private class fitbitServer extends NanoHTTPD {
-
+        SharedPreferences sharedPref;
+        SharedPreferences.Editor editor;
         public fitbitServer() {
             super(8085);
             Log.i("fitbit", "server start");
-
-
+            sharedPref= getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+            editor=sharedPref.edit();
         }
 
         /*dummy stage data
@@ -421,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             }
-                return("time:"+System.currentTimeMillis()+",hr:"+hr+",xa:"+motionX+",ya:"+motionY+",za:"+motionZ+",xg"+gyrox+",yg"+gyroy+",zg"+gyroz+",is3:"+s3Prob+",is3avg:"+avgProb+",cueing:"+cueRunning+",vol:"+cueVolume+",elapsed:"+(elapsedTime));
+                return(System.currentTimeMillis()+","+hr+","+String.format("%.2f", motionX)+","+String.format("%.2f", motionY)+","+String.format("%.2f", motionZ)+","+String.format("%.3f", gyrox)+","+String.format("%.3f", gyroy)+","+String.format("%.3f", gyroz)+","+s3Prob+","+avgProb+","+cueRunning+","+cueVolume+","+(elapsedTime));
 
             } //no stage info available
             else {
@@ -440,9 +441,10 @@ public class MainActivity extends AppCompatActivity {
             if (uri.indexOf("rawdata") > -1) { //recieved a data packet from the Fitbit, set the Fitbit status to good.
                 Log.i("data",parameters.toString());
                 String result=handleStaging(parameters.toString());
-                Log.i("cuedata",result);
-                String temp=parameters.toString()+","+result+"\n";
 
+                String current=sharedPref.getString("sleepdata","");
+                editor.putString("sleepdata",current+"\n"+result);
+                editor.apply();
 
 
             }
