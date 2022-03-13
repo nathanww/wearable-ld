@@ -37,7 +37,7 @@ public class AppStart extends AppCompatActivity {
             Intent startSleep = new Intent(this, MainActivity.class);
             startActivity(startSleep);
         }
-        if (taskStatus == 5) { //training and sleep
+        if (taskStatus == 5) { //dream report
             Intent dreamReport = new Intent(this, DreamReport.class);
             startActivity(dreamReport);
         }
