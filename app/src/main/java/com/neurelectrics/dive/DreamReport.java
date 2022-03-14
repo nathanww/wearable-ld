@@ -21,7 +21,9 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 public class DreamReport extends AppCompatActivity {
-
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
+    long startedTime=0;
     private boolean checkInternet() { //returns true if internet is connected
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -54,12 +56,47 @@ public class DreamReport extends AppCompatActivity {
         alert.show();
     }
 
+    private void askWhereToGo() {
+        if (System.currentTimeMillis() - startedTime > (1800*1000)) { //if we've waited more than 30 min to fill out the dream report, it's a delayed report and we shouldn't offer the option to go back to sleep
+            editor.putInt("taskStatus",7);
+            editor.commit();
+            finish();
+        }
+        else {
+            AlertDialog.Builder builder;
+            builder = new AlertDialog.Builder(this);
+            builder.setMessage("Do you want to go back to sleep or get up for the day?")
+                    .setCancelable(false)
+                    .setPositiveButton("Go back to sleep", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            editor.putInt("taskStatus", 5);
+                            editor.commit();
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("Get up for the day", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            editor.putInt("taskStatus", 7);
+                            editor.commit();
+                            finish();
+                        }
+                    });
+
+            //Creating dialog box
+            AlertDialog alert = builder.create();
+            //Setting the title manually
+            alert.setTitle("Back to sleep?");
+            alert.show();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dream_report);
-        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
+        sharedPref=getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        editor=sharedPref.edit();
+        startedTime=System.currentTimeMillis();
 
         if (!checkInternet()) {
             connectionAlert();
@@ -81,9 +118,9 @@ public class DreamReport extends AppCompatActivity {
         //get the participant ID if it exists, if not generate a new one
         int pid=sharedPref.getInt("pid",-1);
 
-        //send the sleep data to ifttt
+        //send the sleep data to qualtrics
 
-        String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6FCssjBFQNC95j0?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getString("pType","unassigned"+"&night="+sharedPref.getInt("currentNight",-1)+"&arousal="+sharedPref.getInt("arousalSum2",-1)+":"+sharedPref.getInt("arousalN2",-1)+"&sleepdata="+sharedPref.getString("sleepdata",""));
+        String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6FCssjBFQNC95j0?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getString("pType","unassigned"+"&night="+sharedPref.getInt("currentNight",-1)+"&arousal="+sharedPref.getInt("arousalSum2",-1)+":"+sharedPref.getInt("arousalN2",-1)+"&sleepdata="+sharedPref.getString("sleepdata","")+"&reportDelay="+(System.currentTimeMillis()-startedTime)/1000);
         WebView wv = (WebView) findViewById(R.id.reportView);
         wv.loadUrl(pageTarget);
         WebSettings webSettings = wv.getSettings();
@@ -95,10 +132,8 @@ public class DreamReport extends AppCompatActivity {
                 if (url.indexOf("google.com") > -1) {
                     Log.i("squrl",url);
                     Log.i("sq","complete");
+                    askWhereToGo();
 
-                    editor.putInt("taskStatus",3);
-                    editor.commit();
-                    finish();
                 }
             }
         });

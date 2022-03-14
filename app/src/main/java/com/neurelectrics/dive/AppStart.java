@@ -14,7 +14,6 @@ public class AppStart extends AppCompatActivity {
 
 
         int taskStatus = sharedPref.getInt("taskStatus", 0); //get where we are in the experiment
-        taskStatus=5;
         Log.i("task status",""+taskStatus);
         if (taskStatus == 0) { //consent form has not been filled out
             Intent getConsent = new Intent(this, ConsentActivity.class);
@@ -33,11 +32,11 @@ public class AppStart extends AppCompatActivity {
             Intent soundCal = new Intent(this, SoundCalibration.class);
             startActivity(soundCal);
         }
-        if (taskStatus == 4) { //training and sleep
+        if (taskStatus == 4 || taskStatus == 5) { //training and sleep
             Intent startSleep = new Intent(this, MainActivity.class);
             startActivity(startSleep);
         }
-        if (taskStatus == 5) { //dream report
+        if (taskStatus == 6) { //dream report
             Intent dreamReport = new Intent(this, DreamReport.class);
             startActivity(dreamReport);
         }
@@ -46,6 +45,7 @@ public class AppStart extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_start);
+
     }
 
 

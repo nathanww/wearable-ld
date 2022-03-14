@@ -227,7 +227,12 @@ public class MainActivity extends AppCompatActivity {
         }, 10000, 1000);
 
 
-
+    //jump back into sleep mode if the task status is 5
+        int taskStatus = sharedPref.getInt("taskStatus", 0); //get where we are in the experiment
+        if (taskStatus == 5) {
+            switchToSleepMode();
+            ONSET_TIME=600;
+        }
     }
     private void fixConnection() {
         conFixArm=true; //enable app to self-restart
@@ -266,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
                 stopButton.setOnClickListener(new View.OnClickListener() {
                                                    @Override
                                                    public void onClick(View v) {
-                                                    editor.putInt("taskStatus",5);
+                                                    editor.putInt("taskStatus",6);
 
                                                     editor.commit();
                                                     finish();
