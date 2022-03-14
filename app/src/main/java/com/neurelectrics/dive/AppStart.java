@@ -40,6 +40,10 @@ public class AppStart extends AppCompatActivity {
             Intent dreamReport = new Intent(this, DreamReport.class);
             startActivity(dreamReport);
         }
+        if (taskStatus == 7) { //end of the night, if this is night 7 then do the night 7 report, otherwise show the done screen
+            Intent dreamReport = new Intent(this, DreamReport.class);
+            startActivity(dreamReport);
+        }
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {

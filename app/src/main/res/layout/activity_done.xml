@@ -4,18 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Night7">
+    tools:context=".Done">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:layout_editor_absoluteX="48dp"
-        tools:layout_editor_absoluteY="131dp">
+        tools:layout_editor_absoluteX="35dp"
+        tools:layout_editor_absoluteY="66dp">
 
-        <WebView
-            android:id="@+id/night7view"
+        <TextView
+            android:id="@+id/textView6"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:text="That's all for today! Tap the button below when you're ready to go to bed again."
+            android:textSize="28sp" />
+
+        <Button
+            android:id="@+id/startNewSession"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start new session" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

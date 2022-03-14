@@ -64,8 +64,8 @@ public class Night7 extends AppCompatActivity {
         Log.i("night7 questionnaire","starting questionnaire");
         //get the participant ID if it exists, if not generate a new one
         int pid=sharedPref.getInt("pid",-1);
-        String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_0rcAYVySidemymW?participantID="+pid;
-        WebView wv = (WebView) findViewById(R.id.sqView);
+        String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_0rcAYVySidemymW?participantID="+pid+"&pType="+sharedPref.getString("pType","control");
+        WebView wv = (WebView) findViewById(R.id.night7view);
         wv.loadUrl(pageTarget);
         WebSettings webSettings = wv.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -77,8 +77,12 @@ public class Night7 extends AppCompatActivity {
                     Log.i("squrl",url);
                     Log.i("sq","complete");
 
-                    editor.putInt("taskStatus",3);
+                    editor.putBoolean("night7done",true);
+
+                    editor.putInt("taskStatus",7);
+
                     editor.commit();
+
                     finish();
                 }
             }
