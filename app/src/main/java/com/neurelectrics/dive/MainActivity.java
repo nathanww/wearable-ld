@@ -113,10 +113,7 @@ public class MainActivity extends AppCompatActivity {
         wakeLock.acquire();
         wakeupHandler(); //start a loop to keep the device active
 
-        //if this is the first night, or this is an active participant, then turn the sham mode off
-        if (sharedPref.getInt("currentNight",0) == 0 || (sharedPref.getBoolean("pType",true))) {
-            shamNight=false;
-        }
+
         //set up the lucid music
         lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.combinedsignal);
         lucidMusic.setVolume(1.0f,1.0f);
@@ -175,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                 signalcue.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //if delay item is 4, meaning we just played the instructions for the fourth time, then start the cues without guidance
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        if (delayItem==4 || (!firstTraining && delayItem == 1)) {
+                        if ((firstTraining && delayItem==4) || (!firstTraining && delayItem == 1)) {
                             noguidance.start();
                         }
                     }
@@ -238,6 +235,11 @@ public class MainActivity extends AppCompatActivity {
         if (taskStatus == 5) {
             switchToSleepMode();
             ONSET_TIME=600;
+        }
+
+        //if this is the first night, or this is an active participant, then turn the sham mode off
+        if (sharedPref.getInt("currentNight",0) == 0 || (sharedPref.getBoolean("pType",true))) {
+            shamNight=false;
         }
     }
     private void fixConnection() {
@@ -307,12 +309,13 @@ public class MainActivity extends AppCompatActivity {
                 if (delayItem < 4) {
                     signalcue.start();
                 }
-                else {
-                    if (delayItem == 1) {
+            }
+                else { //not the first training
+                    if (delayItem == 0) {
                         signalcue.start();
                     }
                 }
-            }
+
 
             trainingEpochs=1;
             if (delayItem < delayTimes.length-1) {

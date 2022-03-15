@@ -82,7 +82,7 @@ public class sleepQuestion extends AppCompatActivity {
         wv.setWebViewClient(new WebViewClient() {
 
             public void onPageFinished(WebView view, String url) {
-                if (url.indexOf("google.com") > -1) {
+                if (url.indexOf("github") > -1) {
                     Log.i("squrl",url);
                     Log.i("sq","complete");
 
