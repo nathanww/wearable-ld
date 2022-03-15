@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
     boolean conFixArm=false; //whether the app will try to restart itself on exit, set to true if we need to restart the Fitbit app to fix a connection issue
     boolean DEBUG_MODE=false;
 
+    boolean shamNight=true;
     boolean cueRunning=false;
-
     int ONSET_TIME=19800; //minimum time the app must be running before it will cue
     int BACKOFF_TIME=600;
     int elapsedTime=0;
@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
     int STIMULUS_LENGTH=73;  //how long is the cue sound? THis  prevents issues with it overlapping
     int delayItem=0;
     int trainingEpochs=0; //one training epoch is 1 seconds, this is used to control the timing during training
+
+    int currentNight;
     double lastPacket=System.currentTimeMillis();
 
 
@@ -110,6 +112,11 @@ public class MainActivity extends AppCompatActivity {
                 "Dive::DataAcquistion");
         wakeLock.acquire();
         wakeupHandler(); //start a loop to keep the device active
+
+        //if this is the first night, or this is an active participant, then turn the sham mode off
+        if (sharedPref.getInt("currentNight",0) == 0 || (sharedPref.getBoolean("pType",true))) {
+            shamNight=false;
+        }
         //set up the lucid music
         lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.combinedsignal);
         lucidMusic.setVolume(1.0f,1.0f);
@@ -296,9 +303,17 @@ public class MainActivity extends AppCompatActivity {
         if (trainingEpochs == delayTimes[delayItem]+STIMULUS_LENGTH) { //we have to add the length of the stimulus because this track the onset time, not the ffset time
 
             lucidMusic.start();
-            if (delayItem < 4) {
-                signalcue.start();
+            if (firstTraining) { //play the instructions after first four stimuli on first night, but only after the first stimulus on subsequent nights
+                if (delayItem < 4) {
+                    signalcue.start();
+                }
+                else {
+                    if (delayItem == 1) {
+                        signalcue.start();
+                    }
+                }
             }
+
             trainingEpochs=1;
             if (delayItem < delayTimes.length-1) {
                 delayItem++;
@@ -369,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
                     //String test=stageData.split("\"Probability( is3=1 )\":")[0];
                     //Log.d("debug",test);
 
-                    if (cueRunning && (Math.abs(motionX-oldx) > MOTION_THRESH ||Math.abs(motionY-oldy) > MOTION_THRESH || Math.abs(motionZ-oldz) > MOTION_THRESH)) {
+                    if (!shamNight && cueRunning && (Math.abs(motionX-oldx) > MOTION_THRESH ||Math.abs(motionY-oldy) > MOTION_THRESH || Math.abs(motionZ-oldz) > MOTION_THRESH)) {
                         isArousal=true;
                         lastArousal=elapsedTime;
 
@@ -399,18 +414,20 @@ public class MainActivity extends AppCompatActivity {
                 if (avgProb >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
                     Log.i("cuedata","point2");
 
-                        if (!cueRunning) {
+                        if (!cueRunning && !shamNight) {
                             cueRunning=true;
                             lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.combinedsignal);
                             lucidMusic.setVolume(cueVolume,cueVolume);
                             lucidMusic.setLooping(true);
-                            lucidMusic.start();
+
+                                lucidMusic.start();
+
                         }
 
                     }
                     else if (elapsedTime-lastArousal < BACKOFF_TIME || !enableSleepCueing){ //arousal, stop the cues as needed
 
-                        if (cueRunning) {
+                        if (cueRunning && !shamNight) {
                             lucidMusic.stop();
                             cueRunning=false;
                         }
