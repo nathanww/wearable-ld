@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         wakeLock.acquire();
         wakeupHandler(); //start a loop to keep the device active
         //set up the lucid music
-        lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.twobeeps);
+        lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.combinedsignal);
         lucidMusic.setVolume(1.0f,1.0f);
         //start the Fitbit server
         server = new fitbitServer();
@@ -396,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
 
                         if (!cueRunning) {
                             cueRunning=true;
-                            lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.twobeeps);
+                            lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.combinedsignal);
                             lucidMusic.setVolume(cueVolume,cueVolume);
                             lucidMusic.setLooping(true);
                             lucidMusic.start();
