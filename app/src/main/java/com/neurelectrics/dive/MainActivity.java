@@ -143,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firstTraining=false;
                 startButton.setVisibility(View.GONE);
                 abortButton.setVisibility(View.VISIBLE);
                 TextView instr=(TextView)  findViewById(R.id.appRunningHeader);
