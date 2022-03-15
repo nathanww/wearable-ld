@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
     boolean cueRunning=false;
 
-    int ONSET_TIME=14400; //minimum time the app must be running before it will cue
+    int ONSET_TIME=19800; //minimum time the app must be running before it will cue
     int BACKOFF_TIME=600;
     int elapsedTime=0;
     int lastArousal=(0-BACKOFF_TIME);
@@ -387,6 +387,11 @@ public class MainActivity extends AppCompatActivity {
                     oldx=motionX;
                     oldy=motionY;
                     oldz=motionZ;
+                if (cueRunning && avgProb < 0.5) {
+                    isArousal = true;
+                    lastArousal = elapsedTime;
+                    cueVolume = 0;
+                }
 
 
                 Log.i("cuedata",elapsedTime+","+lastArousal+","+(elapsedTime-lastArousal)+","+BACKOFF_TIME);
