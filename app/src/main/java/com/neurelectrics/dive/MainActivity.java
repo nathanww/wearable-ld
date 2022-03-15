@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     int[] delayTimes={0,45,45,45,45,70,55,65,70,80,65,60,75,75,90,120};
-    int STIMULUS_LENGTH=20;  //how long is the cue sound? THis  prevents issues with it overlapping
+    int STIMULUS_LENGTH=73;  //how long is the cue sound? THis  prevents issues with it overlapping
     int delayItem=0;
     int trainingEpochs=0; //one training epoch is 1 seconds, this is used to control the timing during training
     double lastPacket=System.currentTimeMillis();
