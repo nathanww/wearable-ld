@@ -68,6 +68,9 @@ public class sleepQuestion extends AppCompatActivity {
             Random rand = new Random();
             pid=rand.nextInt(2147483647);
             editor.putInt("pid",pid);
+            //set the participant type (control or real)
+            editor.putBoolean("pType",rand.nextBoolean());
+
             editor.commit();
         }
         String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6R1LomQ0Zmj6Ts2?participantID="+pid;

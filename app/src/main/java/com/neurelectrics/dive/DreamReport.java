@@ -120,7 +120,7 @@ public class DreamReport extends AppCompatActivity {
 
         //send the sleep data to qualtrics
 
-        String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6FCssjBFQNC95j0?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getString("pType","unassigned"+"&night="+sharedPref.getInt("currentNight",-1)+"&arousal="+sharedPref.getInt("arousalSum2",-1)+":"+sharedPref.getInt("arousalN2",-1)+"&sleepdata="+sharedPref.getString("sleepdata","")+"&reportDelay="+(System.currentTimeMillis()-startedTime)/1000);
+        String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6FCssjBFQNC95j0?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getBoolean("pType",false)+"&night="+sharedPref.getInt("currentNight",-1)+"&arousal="+sharedPref.getInt("arousalSum2",-1)+":"+sharedPref.getInt("arousalN2",-1)+"&sleepdata="+sharedPref.getString("sleepdata","")+"&reportDelay="+(System.currentTimeMillis()-startedTime)/1000;
         WebView wv = (WebView) findViewById(R.id.reportView);
         wv.loadUrl(pageTarget);
         WebSettings webSettings = wv.getSettings();
