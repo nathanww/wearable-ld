@@ -3,7 +3,9 @@ package com.neurelectrics.dive;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -44,6 +46,11 @@ void confirmFitbit() {
             connected2.setVisibility(View.VISIBLE);
             //instructions.setVisibility(View.GONE);
             connectionIssue.setVisibility(View.GONE);
+
+            SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putInt("taskStatus",2);
+            editor.commit();
         }
 
     });
