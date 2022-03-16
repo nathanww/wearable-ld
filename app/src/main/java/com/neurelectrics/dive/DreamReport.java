@@ -105,7 +105,7 @@ public class DreamReport extends AppCompatActivity {
             try {
                 int pid=sharedPref.getInt("pid",-1);
 
-                String urlString = "https://maker.ifttt.com/trigger/luciddata/with/key/kYjllPFEGolhZUDSPQsFRHxRPr7pZgSixnXCVM8UDIR?value1="+pid+"&value2="+sharedPref.getInt("currentNight",-1)+"&value3="+sharedPref.getString("sleepdata","");
+                String urlString = "https://maker.ifttt.com/trigger/luciddata/with/key/kYjllPFEGolhZUDSPQsFRHxRPr7pZgSixnXCVM8UDIR?value1="+pid+"&value2="+sharedPref.getInt("currentNight",-1)+"&value3="+URLEncoder.encode(sharedPref.getString("sleepdata",""), StandardCharsets.UTF_8.toString());
                 URL url = new URL(urlString);
                 url.openStream();
                 editor.putString("sleepdata","");
@@ -119,8 +119,8 @@ public class DreamReport extends AppCompatActivity {
         int pid=sharedPref.getInt("pid",-1);
 
         //send the sleep data to qualtrics
-
-        String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6FCssjBFQNC95j0?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getBoolean("pType",false)+"&night="+sharedPref.getInt("currentNight",-1)+"&arousal="+sharedPref.getInt("arousalSum2",-1)+":"+sharedPref.getInt("arousalN2",-1)+"&sleepdata="+sharedPref.getString("sleepdata","")+"&reportDelay="+(System.currentTimeMillis()-startedTime)/1000;
+        Log.i("dreamreport","Loading qualtrics page");
+        String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6FCssjBFQNC95j0?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getBoolean("pType",false)+"&night="+sharedPref.getInt("currentNight",-1)+"&arousal="+sharedPref.getFloat("arousalSum2",-1)+":"+sharedPref.getInt("arousalN2",-1)+"&reportDelay="+(System.currentTimeMillis()-startedTime)/1000;
         WebView wv = (WebView) findViewById(R.id.reportView);
         wv.loadUrl(pageTarget);
         WebSettings webSettings = wv.getSettings();
@@ -129,6 +129,8 @@ public class DreamReport extends AppCompatActivity {
         wv.setWebViewClient(new WebViewClient() {
 
             public void onPageFinished(WebView view, String url) {
+                Log.i("dreamreport","pageload finished");
+
                 if (url.indexOf("github") > -1) {
                     Log.i("squrl",url);
                     Log.i("sq","complete");
