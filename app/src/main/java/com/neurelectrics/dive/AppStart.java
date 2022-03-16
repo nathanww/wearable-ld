@@ -11,7 +11,9 @@ import android.util.Log;
 public class AppStart extends AppCompatActivity {
     void checkStatus() {
         SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
-
+        SharedPreferences.Editor editor = sharedPref.edit();
+       // editor.putInt("taskStatus",5);
+        //editor.commit();
 
         int taskStatus = sharedPref.getInt("taskStatus", 0); //get where we are in the experiment
         Log.i("taskstatus",""+taskStatus);

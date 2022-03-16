@@ -360,38 +360,46 @@ public class MainActivity extends AppCompatActivity {
         }
         String handleStaging(String stageData) {
             elapsedTime++;
+            float s3Prob=-1;
+            float motionX=-1;
+            float motionY=-1;
+            float motionZ=-1;
+            float hr=-1;
+            float gyrox=-1;
+            float gyroy=-1;
+            float gyroz=-1;
+            float avgProb=-1;
             //logic for controlling cueing
             if (stageData.indexOf("\"Probability( is3=1 )\":") > -1) {
-                float s3Prob=Float.parseFloat(stageData.split(":")[12].split(",")[0]);
-                float motionX=Float.parseFloat(stageData.split(":")[2].split(",")[0]);
-                float motionY=Float.parseFloat(stageData.split(":")[3].split(",")[0]);
-                float motionZ=Float.parseFloat(stageData.split(":")[4].split(",")[0]);
-                float hr=Float.parseFloat(stageData.split(":")[1].split(",")[0]);
-                float gyrox=Float.parseFloat(stageData.split(":")[5].split(",")[0]);
-                float gyroy=Float.parseFloat(stageData.split(":")[6].split(",")[0]);
-                float gyroz=Float.parseFloat(stageData.split(":")[7].split(",")[0]);
+                s3Prob = Float.parseFloat(stageData.split(":")[12].split(",")[0]);
+                motionX = Float.parseFloat(stageData.split(":")[2].split(",")[0]);
+                motionY = Float.parseFloat(stageData.split(":")[3].split(",")[0]);
+                motionZ = Float.parseFloat(stageData.split(":")[4].split(",")[0]);
+                hr = Float.parseFloat(stageData.split(":")[1].split(",")[0]);
+                gyrox = Float.parseFloat(stageData.split(":")[5].split(",")[0]);
+                gyroy = Float.parseFloat(stageData.split(":")[6].split(",")[0]);
+                gyroz = Float.parseFloat(stageData.split(":")[7].split(",")[0]);
                 probBuffer.add(s3Prob);
                 if (probBuffer.size() > BUFFER_SIZE) {
                     probBuffer.remove(0);
                 }
-                float avgProb=average(probBuffer);
+                avgProb = average(probBuffer);
 
 
-
-                boolean isArousal=false;
-            if (elapsedTime >= ONSET_TIME) {
-                Log.i("cuedata","point1");
+                boolean isArousal = false;
+                if (elapsedTime >= ONSET_TIME) {
+                    Log.i("cuedata", "point1");
 
 
                     //String test=stageData.split("\"Probability( is3=1 )\":")[0];
                     //Log.d("debug",test);
 
-                    if (!shamNight && cueRunning && (Math.abs(motionX-oldx) > MOTION_THRESH ||Math.abs(motionY-oldy) > MOTION_THRESH || Math.abs(motionZ-oldz) > MOTION_THRESH)) {
-                        isArousal=true;
-                        lastArousal=elapsedTime;
+                    if (!shamNight && cueRunning && (Math.abs(motionX - oldx) > MOTION_THRESH || Math.abs(motionY - oldy) > MOTION_THRESH || Math.abs(motionZ - oldz) > MOTION_THRESH)) {
+                        isArousal = true;
+                        lastArousal = elapsedTime;
 
-                        float arousalSum=sharedPref.getFloat("arousalSum2",0);
-                        int arousalN=sharedPref.getInt("arousalN2",0);
+                        float arousalSum = sharedPref.getFloat("arousalSum2", 0);
+                        int arousalN = sharedPref.getInt("arousalN2", 0);
                         if (arousalN < 4) {
                             arousalN++;
                             arousalSum = arousalSum + cueVolume;
@@ -399,68 +407,64 @@ public class MainActivity extends AppCompatActivity {
                             editor.putInt("arousalN2", arousalN);
                             editor.commit();
                         }
-                        cueVolume=0;
+                        cueVolume = 0;
                     }
-                    oldx=motionX;
-                    oldy=motionY;
-                    oldz=motionZ;
-                if (cueRunning && avgProb < 0.5) {
-                    isArousal = true;
-                    lastArousal = elapsedTime;
-                    cueVolume = 0;
-                }
+                    oldx = motionX;
+                    oldy = motionY;
+                    oldz = motionZ;
+                    if (cueRunning && avgProb < 0.5) {
+                        isArousal = true;
+                        lastArousal = elapsedTime;
+                        cueVolume = 0;
+                    }
 
 
-                Log.i("cuedata",elapsedTime+","+lastArousal+","+(elapsedTime-lastArousal)+","+BACKOFF_TIME);
+                    Log.i("cuedata", elapsedTime + "," + lastArousal + "," + (elapsedTime - lastArousal) + "," + BACKOFF_TIME);
                     //if (avgProb >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME) { //conditions are good for cueing
-                if (avgProb >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime-lastArousal >= BACKOFF_TIME && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
-                    Log.i("cuedata","point2");
+                    if (avgProb >= ONSET_THRESH && elapsedTime >= ONSET_TIME && elapsedTime - lastArousal >= BACKOFF_TIME && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
+                        Log.i("cuedata", "point2");
 
                         if (!cueRunning && !shamNight) {
-                            cueRunning=true;
-                            lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.combinedsignal);
-                            lucidMusic.setVolume(cueVolume,cueVolume);
+                            cueRunning = true;
+                            lucidMusic = MediaPlayer.create(MainActivity.this, R.raw.combinedsignal);
+                            lucidMusic.setVolume(cueVolume, cueVolume);
                             lucidMusic.setLooping(true);
 
-                                lucidMusic.start();
+                            lucidMusic.start();
 
                         }
 
-                    }
-                    else if (elapsedTime-lastArousal < BACKOFF_TIME || !enableSleepCueing){ //arousal, stop the cues as needed
+                    } else if (elapsedTime - lastArousal < BACKOFF_TIME || !enableSleepCueing) { //arousal, stop the cues as needed
 
                         if (cueRunning && !shamNight) {
                             lucidMusic.stop();
-                            cueRunning=false;
+                            cueRunning = false;
                         }
                     }
-                if (cueRunning) { //if the cueing is running, start incrementing the
-                    editor.putFloat("highestVol",cueVolume);
-                    editor.apply();
-                    cueVolume = cueVolume + CUE_VOLUME_INC;
-                    //check to see if we've recorded enough arousals to set a volume cap. If we have, make sure the volume doesn't exceed the cap
-                    float arousalSum = sharedPref.getFloat("arousalSum2", 0);
-                    int arousalN = sharedPref.getInt("arousalN2", 0);
+                    if (cueRunning) { //if the cueing is running, start incrementing the
+                        editor.putFloat("highestVol", cueVolume);
+                        editor.apply();
+                        cueVolume = cueVolume + CUE_VOLUME_INC;
+                        //check to see if we've recorded enough arousals to set a volume cap. If we have, make sure the volume doesn't exceed the cap
+                        float arousalSum = sharedPref.getFloat("arousalSum2", 0);
+                        int arousalN = sharedPref.getInt("arousalN2", 0);
 
-                    if (arousalN >= 4) {
-                        float meanThresh = (arousalSum / arousalN) * 0.75f;
-                        if (cueVolume > meanThresh) {
-                            cueVolume = meanThresh;
-                            Log.i("volume", "capped at " + meanThresh);
+                        if (arousalN >= 4) {
+                            float meanThresh = (arousalSum / arousalN) * 0.75f;
+                            if (cueVolume > meanThresh) {
+                                cueVolume = meanThresh;
+                                Log.i("volume", "capped at " + meanThresh);
+                            }
                         }
-                    }
-                    maximizeVolume(); //override any volume adjustments
-                    lucidMusic.setVolume(cueVolume, cueVolume);
+                        maximizeVolume(); //override any volume adjustments
+                        lucidMusic.setVolume(cueVolume, cueVolume);
 
+                    }
                 }
             }
-                return(System.currentTimeMillis()+","+hr+","+String.format("%.2f", motionX)+","+String.format("%.2f", motionY)+","+String.format("%.2f", motionZ)+","+String.format("%.3f", gyrox)+","+String.format("%.3f", gyroy)+","+String.format("%.3f", gyroz)+","+s3Prob+","+avgProb+","+cueRunning+","+cueVolume+","+(elapsedTime));
+                return(System.currentTimeMillis()+","+hr+","+String.format("%.2f", motionX)+","+String.format("%.2f", motionY)+","+String.format("%.2f", motionZ)+","+String.format("%.3f", gyrox)+","+String.format("%.3f", gyroy)+","+String.format("%.3f", gyroz)+","+String.format("%.2f", s3Prob)+","+String.format("%.2f", avgProb)+","+cueRunning+","+cueVolume+","+(elapsedTime));
 
-            } //no stage info available
-            else {
-                Log.e("cuing","No stage");
-                return "";
-            }
+
         }
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -475,7 +479,7 @@ public class MainActivity extends AppCompatActivity {
                 String result=handleStaging(parameters.toString());
 
                 String current=sharedPref.getString("sleepdata","");
-                editor.putString("sleepdata",current+"\n"+result);
+                editor.putString("sleepdata",current+"##"+result);
                 editor.apply();
 
 
