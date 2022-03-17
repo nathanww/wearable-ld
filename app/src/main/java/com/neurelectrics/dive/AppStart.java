@@ -16,7 +16,6 @@ public class AppStart extends AppCompatActivity {
         //editor.commit();
         int taskStatus = sharedPref.getInt("taskStatus", 0); //get where we are in the experiment
 
-        taskStatus=6;
 
         Log.i("taskstatus",""+taskStatus);
 
