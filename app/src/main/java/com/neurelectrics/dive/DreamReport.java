@@ -15,6 +15,7 @@ import android.webkit.WebViewClient;
 
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -81,7 +82,7 @@ public class DreamReport extends AppCompatActivity {
                     return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
                 }
             };
-
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(50 * 1000, 5, 1.0f));
             requestQueue.add(stringRequest);
         } catch (Exception e) {
             e.printStackTrace();
@@ -165,8 +166,19 @@ public class DreamReport extends AppCompatActivity {
         editor=sharedPref.edit();
         startedTime=System.currentTimeMillis();
         int pid=sharedPref.getInt("pid",0);
-        String sleepdata=sharedPref.getString("sleepdata","");
-        Log.i("sleepdata",sleepdata.substring(0,100));
+        String sleepdata=sharedPref.getString("sleepdata","")+" ";
+
+
+        //test to make an enormous sleepdata and see if it gets chunked correctly
+        /*
+        sleepdata="";
+        Log.i("test","generating");
+        String sample="1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
+        for (int i=0; i< 1500; i++) {
+            sleepdata=sleepdata+sample;
+        }
+        Log.i("test","done");
+*/
         int night=sharedPref.getInt("currentNight",0);
         if (!checkInternet()) {
             connectionAlert();
@@ -181,22 +193,6 @@ public class DreamReport extends AppCompatActivity {
                 }
         }
         Log.i("Dream report","Starting dream report");
-
-        String data1="";
-        String data2="";
-        String data3="";
-
-            if (sleepdata.length() > 5000) {
-                data1=sleepdata.substring(0,5000);
-                data2=sleepdata.substring(5000,5000*2);
-                if (sleepdata.length() > 5000*2) {
-                    data3=sleepdata.substring(5000*2);
-                }
-            }
-            else {
-                data1=sleepdata;
-            }
-
 
 
 
