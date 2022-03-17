@@ -15,7 +15,7 @@ public class AppStart extends AppCompatActivity {
        // editor.putInt("taskStatus",5);
         //editor.commit();
         int taskStatus = sharedPref.getInt("taskStatus", 0); //get where we are in the experiment
-
+        taskStatus=6;
 
         Log.i("taskstatus",""+taskStatus);
 
@@ -60,6 +60,7 @@ public class AppStart extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_start);
+        checkStatus();
 
     }
 

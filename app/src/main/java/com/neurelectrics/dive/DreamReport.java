@@ -43,6 +43,7 @@ import java.util.Map;
 public class DreamReport extends AppCompatActivity {
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
+    int APP_VERSION=1;
     long startedTime=0;
 
     void postSleepData(String data, String userID) {
@@ -144,6 +145,7 @@ public class DreamReport extends AppCompatActivity {
                             editor.putInt("taskStatus", 7);
                             //only wipe the sleep data if we know this is the last session for the night. That way we know all the data will be written
                             editor.putString("sleepdata","");
+                            editor.putInt("totalCues",0);
                             editor.commit();
                             editor.commit();
                             finish();
@@ -199,7 +201,7 @@ public class DreamReport extends AppCompatActivity {
         //send the sleep data to qualtrics
         Log.i("dreamreport","Loading qualtrics page,"+sleepdata.length());
         //String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6FCssjBFQNC95j0?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getBoolean("pType",false)+"&night="+sharedPref.getInt("currentNight",-1)+"&arousal="+sharedPref.getFloat("arousalSum2",-1)+":"+sharedPref.getInt("arousalN2",-1)+"&reportDelay="+(System.currentTimeMillis()-startedTime)/1000+"&sleepdata1="+data1+"&sleepdata2="+data2+"&sleepdata3="+data3;
-        String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6FCssjBFQNC95j0?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getBoolean("pType",false)+"&night="+sharedPref.getInt("currentNight",-1)+"&arousalSum="+sharedPref.getFloat("arousalSum2",-1)+"&arousalN="+sharedPref.getInt("arousalN2",-1)+"&reportDelay="+(System.currentTimeMillis()-startedTime)/1000+"&highestVol="+sharedPref.getFloat("highestVol",-1);
+        String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6FCssjBFQNC95j0?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getBoolean("pType",false)+"&night="+sharedPref.getInt("currentNight",-1)+"&arousalSum="+sharedPref.getFloat("arousalSum2",-1)+"&arousalN="+sharedPref.getInt("arousalN2",-1)+"&reportDelay="+(System.currentTimeMillis()-startedTime)/1000+"&highestVol="+sharedPref.getFloat("highestVol",-1)+"&totalCues="+sharedPref.getInt("totalCues",0)+"&appVersion="+APP_VERSION;
 
         Log.i("pagetarget",pageTarget);
         WebView wv = (WebView) findViewById(R.id.reportView);

@@ -443,6 +443,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     if (cueRunning) { //if the cueing is running, start incrementing the
                         editor.putFloat("highestVol", cueVolume);
+                        editor.putInt("totalCues",sharedPref.getInt("totalCues",0)+1);
                         editor.apply();
                         cueVolume = cueVolume + CUE_VOLUME_INC;
                         //check to see if we've recorded enough arousals to set a volume cap. If we have, make sure the volume doesn't exceed the cap
