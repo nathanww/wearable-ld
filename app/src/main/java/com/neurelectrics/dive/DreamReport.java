@@ -147,7 +147,6 @@ public class DreamReport extends AppCompatActivity {
                             editor.putString("sleepdata","");
                             editor.putInt("totalCues",0);
                             editor.commit();
-                            editor.commit();
                             finish();
                         }
                     });
