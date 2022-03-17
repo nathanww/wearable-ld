@@ -159,16 +159,13 @@ public class DreamReport extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dream_report);
+    void initReport() {
         sharedPref=getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
         editor=sharedPref.edit();
         startedTime=System.currentTimeMillis();
         int pid=sharedPref.getInt("pid",0);
         String sleepdata=sharedPref.getString("sleepdata","")+" ";
-
+        Log.d("dreamreport","started");
 
         //test to make an enormous sleepdata and see if it gets chunked correctly
         /*
@@ -185,13 +182,13 @@ public class DreamReport extends AppCompatActivity {
             connectionAlert();
         }
         else { //if the internet is working, send the sleep data
-                if (sleepdata.length() < 900000) {
-                    postSleepData(sleepdata, pid + "-night" + night+"-chunk0");
-                }
-                else {
-                    postSleepData(sleepdata.substring(0,900000), pid + "-night" + night+"-chunk0");
-                    postSleepData(sleepdata.substring(900000), pid + "-night" + night+"-chunk1");
-                }
+            if (sleepdata.length() < 900000) {
+                postSleepData(sleepdata, pid + "-night" + night+"-chunk0");
+            }
+            else {
+                postSleepData(sleepdata.substring(0,900000), pid + "-night" + night+"-chunk0");
+                postSleepData(sleepdata.substring(900000), pid + "-night" + night+"-chunk1");
+            }
         }
         Log.i("Dream report","Starting dream report");
 
@@ -222,7 +219,14 @@ public class DreamReport extends AppCompatActivity {
                 }
             }
         });
+    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_dream_report);
+        initReport();
 
 
     }
+
 }
