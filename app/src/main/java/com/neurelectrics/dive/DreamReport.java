@@ -45,6 +45,7 @@ public class DreamReport extends AppCompatActivity {
     long startedTime=0;
 
     void postSleepData(String data, String userID) {
+
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(this);
             String URL = "https://biostream-1024.appspot.com/lucid";
@@ -171,7 +172,13 @@ public class DreamReport extends AppCompatActivity {
             connectionAlert();
         }
         else { //if the internet is working, send the sleep data
-            postSleepData(sleepdata,pid+"-night"+night);
+                if (sleepdata.length() < 900000) {
+                    postSleepData(sleepdata, pid + "-night" + night+"-chunk0");
+                }
+                else {
+                    postSleepData(sleepdata.substring(0,900000), pid + "-night" + night+"-chunk0");
+                    postSleepData(sleepdata.substring(900000), pid + "-night" + night+"-chunk1");
+                }
         }
         Log.i("Dream report","Starting dream report");
 
