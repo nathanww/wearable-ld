@@ -49,12 +49,19 @@ Compensation: If you agree to take part in this research study, you will not be 
 
 WHO CAN I TALK TO? 
 If you have questions, concerns, or complaints, or think the research has affected you in some way, talk to the research team. 
+
 Ken Paller 
+
 Northwestern University Psychology Department 
+
 2029 Sheridan Road  
+
 Evanston, IL 60208 
+
 (847) 491-5190 
+
 This research has been reviewed and approved by an Institutional Review Board (“IRB”). You may talk to them at (312) 503-9338 or irb@northwestern.edu if: 
+
 ∙ Your questions, concerns, or complaints are not being answered by the research team. 
 ∙ You cannot reach the research team. 
 ∙ You want to talk to someone besides the research team. 
