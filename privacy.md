@@ -1,11 +1,17 @@
 This app is part of a research project at the Cognitive Neuroscience Lab at Northwestern University. All personal information that we collect is handled as described in the consent form below.
 
+
 IRB #: STU00203928-MOD0025 Approved by NU IRB for use on or after 12/9/2020
 CONSENT TO PARTICIPATE IN RESEARCH  
+
 TITLE OF RESEARCH STUDY: Learning, Creative Problem-Solving, REM Sleep, and Dreaming (Establishing two-way communication between an actively dreaming subject and an observer: Inside the Mind of the Dreamer; Illuminating the Dreamer's Perceptual Experiences; and Testing levels of control in laboratory induced lucid dreams) 
+
 INVESTIGATOR: Ken A. Paller, PhD 
+
 SUPPORTED BY: This research is supported by the National Science Foundation, the BIAL Foundation, and the Psychology Department. 
+
 KEY INFORMATION ABOUT THIS RESEARCH STUDY: 
+
 The following is a short summary of this study to help you decide whether to be a part of this study. Information that is more detailed is listed later on in this form. 
 The purpose of this study is to investigate encouraging lucid dreams as part of our larger project to attempt two-way communication between a dreaming participant and an observing researcher. You will be asked to download an Android phone app that will use sound cues to teach reality testing techniques that may make lucid dreaming easier.  On the days that you chose to participate, you will be asked to complete optional online questionnaires about your recent and/or typical sleep habits and experiences. Those nights, before bed you will activate the app, set the volume level, and complete a brief training protocol (less than 30 minutes). You will place the phone on your bed and leave the app running overnight. The phone will play a type of white noise in the background and may play other sounds at points during the night. Whenever you awaken from a dream, at your expected wake time or for another reason, then you will be asked a few questions by the app. If time remains before your scheduled wake time, then you may return to sleep. You are welcome to participate on as many or as few nights as you care to. The app will not operate after June 2023, so your participation will end at that point at the latest. But you can pause, stop, or even delete the app before then if you like. We appreciate your completing any forms or questionnaires but they are not required and you are free to complete just what you decide each time. 
 The primary risk of participation is possible sleep disruption during the week of the study. The main benefit is advances in our understanding of how the brain works. We cannot promise any benefits to you or others from your taking part in this research. 
