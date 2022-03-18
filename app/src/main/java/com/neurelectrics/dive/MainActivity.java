@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //set up the lucid music
-        lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.combinedsignal);
+        lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.trainingsignal);
         lucidMusic.setVolume(1.0f,1.0f);
         //start the Fitbit server
         server = new fitbitServer();
