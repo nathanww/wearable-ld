@@ -43,7 +43,7 @@ import java.util.Map;
 public class DreamReport extends AppCompatActivity {
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
-    int APP_VERSION=1;
+    int APP_VERSION=2;
     long startedTime=0;
 
     void postSleepData(String data, String userID) {
