@@ -237,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //if this is the first night, or this is an active participant, then turn the sham mode off
-        if (sharedPref.getInt("currentNight",0) == 0 || (sharedPref.getBoolean("pType",true))) {
+        if (sharedPref.getInt("currentNight",0) == 0 || (sharedPref.getBoolean("pType",true)) || sharedPref.getInt("currentNight",0) > 6) {
             shamNight=false;
         }
     }
