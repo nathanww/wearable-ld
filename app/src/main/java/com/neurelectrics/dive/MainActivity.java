@@ -4,12 +4,16 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -91,6 +95,11 @@ public class MainActivity extends AppCompatActivity {
     int currentNight;
     double lastPacket=System.currentTimeMillis();
 
+    public boolean isPluggedIn() {
+        Intent intent = this.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+        return plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB || plugged == BatteryManager.BATTERY_PLUGGED_WIRELESS;
+    }
 
     void maximizeVolume() {
         AudioManager am =
@@ -143,60 +152,74 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startButton.setVisibility(View.GONE);
-                abortButton.setVisibility(View.VISIBLE);
-                TextView instr=(TextView)  findViewById(R.id.appRunningHeader);
-                instr.setVisibility(View.VISIBLE);
-                TextView startInstructions=(TextView)  findViewById(R.id.startInstructions);
-                startInstructions.setVisibility(GONE);
-                TextView header=(TextView)  findViewById(R.id.header);
-                header.setVisibility(GONE);
-                if (firstTraining) {
-                    startTraining = MediaPlayer.create(MainActivity.this, R.raw.training1);
-                    training2= MediaPlayer.create(MainActivity.this,R.raw.training2);
-                }
-                else {
-                    startTraining = MediaPlayer.create(MainActivity.this, R.raw.experimental);
-                    training2= MediaPlayer.create(MainActivity.this,R.raw.blank);
+                if (isPluggedIn()) {
+                    startButton.setVisibility(View.GONE);
+                    abortButton.setVisibility(View.VISIBLE);
+                    TextView instr = (TextView) findViewById(R.id.appRunningHeader);
+                    instr.setVisibility(View.VISIBLE);
+                    TextView startInstructions = (TextView) findViewById(R.id.startInstructions);
+                    startInstructions.setVisibility(GONE);
+                    TextView header = (TextView) findViewById(R.id.header);
+                    header.setVisibility(GONE);
+                    if (firstTraining) {
+                        startTraining = MediaPlayer.create(MainActivity.this, R.raw.training1);
+                        training2 = MediaPlayer.create(MainActivity.this, R.raw.training2);
+                    } else {
+                        startTraining = MediaPlayer.create(MainActivity.this, R.raw.experimental);
+                        training2 = MediaPlayer.create(MainActivity.this, R.raw.blank);
 
-                }
-
-
-                lucidMusic.setLooping(false);
-
-                lucidMusic.setVolume(0.8f,0.8f);
-                signalcue= MediaPlayer.create(MainActivity.this,R.raw.atsignal);
-                signalcue.setLooping(false);
-                noguidance= MediaPlayer.create(MainActivity.this,R.raw.cueswoguidance);
-                signalcue.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //if delay item is 4, meaning we just played the instructions for the fourth time, then start the cues without guidance
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        if ((firstTraining && delayItem==4) || (!firstTraining && delayItem == 1)) {
-                            noguidance.start();
-                        }
                     }
-                });
-                startTraining.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //when the first part of the instrutionas are complete, star tthe second part
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
 
-                        training2.start();
-                    }
-                });
 
-                training2.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //when the first part of the instrutionas are complete, star tthe second part
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        trainingTimer=new Timer();
-                        trainingTimer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                handleTrainingSounds(); //start the period where we just play cues and sintructions with long pauses in between.
+                    lucidMusic.setLooping(false);
+
+                    lucidMusic.setVolume(0.8f, 0.8f);
+                    signalcue = MediaPlayer.create(MainActivity.this, R.raw.atsignal);
+                    signalcue.setLooping(false);
+                    noguidance = MediaPlayer.create(MainActivity.this, R.raw.cueswoguidance);
+                    signalcue.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //if delay item is 4, meaning we just played the instructions for the fourth time, then start the cues without guidance
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            if ((firstTraining && delayItem == 4) || (!firstTraining && delayItem == 1)) {
+                                noguidance.start();
                             }
-                        }, 10000, 1000);
-                    }
-                });
-                startTraining.start();
+                        }
+                    });
+                    startTraining.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //when the first part of the instrutionas are complete, star tthe second part
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+
+                            training2.start();
+                        }
+                    });
+
+                    training2.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //when the first part of the instrutionas are complete, star tthe second part
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            trainingTimer = new Timer();
+                            trainingTimer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    handleTrainingSounds(); //start the period where we just play cues and sintructions with long pauses in between.
+                                }
+                            }, 10000, 1000);
+                        }
+                    });
+                    startTraining.start();
+                }
+                else {//phone is not connected to power, so show an alert
+                    AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                    alertDialog.setTitle("Phone not plugged in");
+                    alertDialog.setMessage("The phone must be plugged in to its charger to start");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+
+                }
             }
         });
         if (DEBUG_MODE) {
