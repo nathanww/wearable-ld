@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         TextView connectionWarning=(TextView) findViewById(R.id.connectionWarning);
-                        if (System.currentTimeMillis() > lastPacket+10000) {
+                        if (System.currentTimeMillis() > lastPacket+10000 && sharedPref.getInt("taskStatus",0) < 5) { //show the message if we have a connection problem and also we're not in sleep mode (if the connection dropped during sleep there's no point in bothering the user about it)
                             connectionWarning.setVisibility(View.VISIBLE);
                         }
                         else {
@@ -296,6 +296,12 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 Button abortButton = (Button) findViewById(R.id.abortButton);
                 abortButton.setVisibility(GONE);
+                Button startButton = (Button) findViewById(R.id.startButton);
+                startButton.setVisibility(GONE);
+                TextView header=(TextView) findViewById(R.id.header);
+                header.setVisibility(GONE);
+                TextView instr=(TextView) findViewById(R.id.startInstructions);
+                instr.setVisibility(GONE);
                 Button stopButton = (Button) findViewById(R.id.reportButton);
                 stopButton.setVisibility(View.VISIBLE);
                 stopButton.setOnClickListener(new View.OnClickListener() {
@@ -312,6 +318,9 @@ public class MainActivity extends AppCompatActivity {
                 runningHeader.setVisibility(GONE);
                 TextView wakeHeader=(TextView)findViewById(R.id.wakeHeader);
                 wakeHeader.setVisibility(View.VISIBLE);
+
+                editor.putInt("taskStatus",5);
+                editor.commit();
 
             }
         }));
