@@ -437,7 +437,7 @@ public class MainActivity extends AppCompatActivity {
 
                         float arousalSum = sharedPref.getFloat("arousalSum2", 0);
                         int arousalN = sharedPref.getInt("arousalN2", 0);
-                        if (arousalN < 4) {
+                        if (arousalN < 2) {
                             arousalN++;
                             arousalSum = arousalSum + cueVolume;
                             editor.putFloat("arousalSum2", arousalSum);
@@ -487,7 +487,7 @@ public class MainActivity extends AppCompatActivity {
                         float arousalSum = sharedPref.getFloat("arousalSum2", 0);
                         int arousalN = sharedPref.getInt("arousalN2", 0);
 
-                        if (arousalN >= 4) {
+                        if (arousalN >= 2) {
                             float meanThresh = (arousalSum / arousalN) * 0.75f;
                             if (cueVolume > meanThresh) {
                                 cueVolume = meanThresh;
