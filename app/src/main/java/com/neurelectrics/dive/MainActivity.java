@@ -313,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
                                                    @Override
                                                    public void onClick(View v) {
                                                     editor.putInt("taskStatus",6);
-
+                                                    editor.putLong("startedTime",System.currentTimeMillis());
                                                     editor.commit();
                                                     finish();
                                                    }

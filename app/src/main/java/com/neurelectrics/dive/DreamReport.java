@@ -170,7 +170,7 @@ public class DreamReport extends AppCompatActivity {
     void initReport() {
         sharedPref=getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
         editor=sharedPref.edit();
-        startedTime=System.currentTimeMillis();
+        startedTime=sharedPref.getLong("startedTime",0);
         int pid=sharedPref.getInt("pid",0);
         String sleepdata=sharedPref.getString("sleepdata","")+" ";
         Log.d("dreamreport","started");
