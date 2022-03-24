@@ -43,7 +43,7 @@ import java.util.Map;
 public class DreamReport extends AppCompatActivity {
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
-    int APP_VERSION=3;
+    int APP_VERSION=4;
     long startedTime=0;
     @Override
     public void onBackPressed() {

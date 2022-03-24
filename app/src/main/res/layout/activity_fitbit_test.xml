@@ -30,7 +30,7 @@
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="This app requires a companion app to be installed and running on your Fitbit to detect REM sleep. If you haven't already installed it, tap the button below to install the Dream app.\n\nNote that this app is only compatible with the Fitbit Ionic, Fitbit Versa, and Fitbit Sense" />
+                android:text="This app requires a companion app to be installed and running on your Fitbit to detect REM sleep. If you haven't already installed it, tap the button below to install the Dream app.\n\nThis app is compatible with the Fitbit Ionic, Fitbit Versa 1/2/3/SE, Versa Lite, and Fitbit Sense" />
 
             <Button
                 android:id="@+id/fitbitInstall"
