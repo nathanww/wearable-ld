@@ -29,7 +29,7 @@
         android:id="@+id/startInstructions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tap the button below when you're ready to go to bed. The app will first lead you through a short meditation designed to help you become lucid while you sleep. After that, it will start monitoring your sleep, and play the lucidity signal when you're dreaming!"
+        android:text="Tap the button below when you're ready to go to bed. The app will first lead you through a short meditation designed to help you become lucid while you sleep. Use the volume keys to adjust the training volume to a comfortable level.\n\nAfter the training, the app will start monitoring your sleep, and play the lucidity signal when you're dreaming! "
         android:textColor="#FFFFFF" />
 
     <Button
