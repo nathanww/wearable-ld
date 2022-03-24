@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class Done extends AppCompatActivity {
     @Override
@@ -36,5 +37,8 @@ public class Done extends AppCompatActivity {
                                           }
                                       }
         );
+        int pid=sharedPref.getInt("pid",0);
+        TextView participantID=(TextView)findViewById(R.id.participantID);
+        participantID.setText("Participant ID:"+pid);
     }
 }
