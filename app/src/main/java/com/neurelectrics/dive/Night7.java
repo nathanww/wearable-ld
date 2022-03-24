@@ -50,6 +50,15 @@ public class Night7 extends AppCompatActivity {
         alert.setTitle("No connection");
         alert.show();
     }
+    @Override
+    public void onBackPressed() {
+        // Not calling **super**, disables back button in current screen.
+    }
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        System.exit(0);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

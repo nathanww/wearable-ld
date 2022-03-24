@@ -43,9 +43,17 @@ import java.util.Map;
 public class DreamReport extends AppCompatActivity {
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
-    int APP_VERSION=2;
+    int APP_VERSION=3;
     long startedTime=0;
-
+    @Override
+    public void onBackPressed() {
+        // Not calling **super**, disables back button in current screen.
+    }
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        System.exit(0);
+    }
     void postSleepData(String data, String userID) {
 
         try {

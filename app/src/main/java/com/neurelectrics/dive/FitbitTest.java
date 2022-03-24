@@ -71,6 +71,15 @@ void confirmFitbit() {
     }, 5000, 10000);
 }
     @Override
+    public void onBackPressed() {
+        // Not calling **super**, disables back button in current screen.
+    }
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        System.exit(0);
+    }
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fitbit_test);

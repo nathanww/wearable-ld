@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class AppStart extends AppCompatActivity {
+    double lastRan=0;
     void checkStatus() {
         SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -65,6 +66,8 @@ public class AppStart extends AppCompatActivity {
 
 public  void onResume() {
         super.onResume();
+        if (System.currentTimeMillis()-lastRan > 500) { //prevent mutliple windows opening simulatenously
         checkStatus();
+        lastRan=System.currentTimeMillis();}
     }
 }

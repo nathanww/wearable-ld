@@ -95,6 +95,11 @@ public class MainActivity extends AppCompatActivity {
     int currentNight;
     double lastPacket=System.currentTimeMillis();
 
+    @Override
+    public void onBackPressed() {
+        // Not calling **super**, disables back button in current screen.
+    }
+
     public boolean isPluggedIn() {
         Intent intent = this.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
