@@ -13,14 +13,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Dive">
-        <activity android:name=".Done"></activity>
-        <activity android:name=".Night7" />
-        <activity android:name=".DreamReport" />
-        <activity android:name=".SoundCalibration" />
-        <activity android:name=".sleepQuestion" />
-        <activity android:name=".FitbitTest" />
-        <activity android:name=".ConsentActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".Done" android:screenOrientation="portrait"></activity>
+        <activity android:name=".Night7" android:screenOrientation="portrait"/>
+        <activity android:name=".DreamReport" android:screenOrientation="portrait"/>
+        <activity android:name=".SoundCalibration" android:screenOrientation="portrait"/>
+        <activity android:name=".sleepQuestion" android:screenOrientation="portrait"/>
+        <activity android:name=".FitbitTest" android:screenOrientation="portrait"/>
+        <activity android:name=".ConsentActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".MainActivity" android:screenOrientation="portrait"/>
         <activity
             android:name=".AppStart"
             android:screenOrientation="portrait">
