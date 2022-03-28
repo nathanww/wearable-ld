@@ -70,10 +70,10 @@ public class MainActivity extends AppCompatActivity {
     boolean enableSleepCueing=false;
     float oldx,oldy,oldz=0; //variables to detect sudden motion
     float MOTION_THRESH=5f; //how much motion is considered an arousal
-    float ONSET_THRESH=0.95f; //how high does the rem probability have to be to trigger cueing?
+    float ONSET_THRESH=0.15f; //how high does the rem probability have to be to trigger cueing?
     float cueVolume=0.0f;
     float CUE_VOLUME_INC=0.00075f; //how much does the cue volume increase ach second?
-    int BUFFER_SIZE=60; //HOW MANY TO AVERAGE?
+    int BUFFER_SIZE=360; //HOW MANY TO AVERAGE?
     boolean conFixArm=false; //whether the app will try to restart itself on exit, set to true if we need to restart the Fitbit app to fix a connection issue
     boolean DEBUG_MODE=false;
 
