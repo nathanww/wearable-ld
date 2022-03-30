@@ -207,7 +207,14 @@ public class DreamReport extends AppCompatActivity {
                     }
                     else {
                         postSleepData(remainder2.substring(0,900000), pid + "-night" + night+"-chunk2");
-                        postSleepData(remainder2.substring(900000), pid + "-night" + night+"-chunk3");
+                        String remainder3=remainder2.substring(900000);
+                        if (remainder3.length() < 900000) {
+                            postSleepData(remainder3, pid + "-night" + night + "-chunk3");
+                        }
+                        else {
+                            postSleepData(remainder3.substring(0,900000), pid + "-night" + night+"-chunk3");
+                            postSleepData(remainder3.substring(900000,900000*2), pid + "-night" + night+"-chunk4");
+                        }
                     }
 
                 }
