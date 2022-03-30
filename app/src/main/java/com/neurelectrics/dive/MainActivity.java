@@ -484,7 +484,7 @@ public class MainActivity extends AppCompatActivity {
                         int arousalN = sharedPref.getInt("arousalN2", 0);
 
                         if (arousalN >= 2) {
-                            float meanThresh = (arousalSum / arousalN) * 0.75f;
+                            float meanThresh = (arousalSum / arousalN);
                             if (cueVolume > meanThresh) {
                                 cueVolume = meanThresh;
                                 Log.i("volume", "capped at " + meanThresh);
