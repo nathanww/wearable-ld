@@ -42,7 +42,7 @@
         android:id="@+id/appRunningHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="App is running! Enjoy your dreams!"
+        android:text="App is running! Enjoy your dreams!\n\nYou can use the volume buttons to adjust the volume of the training."
         android:textColor="#FFFFFF"
         android:textSize="24sp"
         android:visibility="gone" />
