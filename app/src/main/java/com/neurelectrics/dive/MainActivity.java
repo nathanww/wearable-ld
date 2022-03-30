@@ -141,6 +141,13 @@ public class MainActivity extends AppCompatActivity {
         Log.w("Httpd", "Web server initialized.");
         SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
+        //get the algorithm type to use--if they are assigned to algo 1 use the short interval, otherwise use the long interval
+        if (sharedPref.getBoolean("algo", false)) {
+            ONSET_THRESH=0.95f;
+            BUFFER_SIZE=60;
+        }
+
+
         //get the training status--have we done the training before?
         firstTraining=sharedPref.getBoolean("firstTraining",true);
 
