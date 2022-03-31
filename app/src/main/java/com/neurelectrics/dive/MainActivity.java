@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
     SensorManager sensorManager;
+    Context mainContext;
     double ax,ay,az=-1;   // accelerometer values
     boolean firstTraining=true;
     float sleepVolume=0;
@@ -138,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
             sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
         }
+        mainContext=this;
         //set up the lucid music
         lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.trainingsignal);
         lucidMusic.setVolume(1.0f,1.0f);
@@ -260,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+
                         TextView connectionWarning=(TextView) findViewById(R.id.connectionWarning);
                         if (System.currentTimeMillis() > lastPacket+10000 && sharedPref.getInt("taskStatus",0) < 5) { //show the message if we have a connection problem and also we're not in sleep mode (if the connection dropped during sleep there's no point in bothering the user about it)
                             connectionWarning.setVisibility(View.VISIBLE);
@@ -305,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 PowerManager.WakeLock powerOn = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "Dive:poweron");
                 powerOn.acquire();
                 powerOn.release();
-                wakeuptimer.postDelayed(this, 60000);
+                wakeuptimer.postDelayed(this, 30000);
 
             }
         };
@@ -538,6 +541,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                               Map<String, String> parameters,
                               Map<String, String> files) {
             //Log.e("fitbitserver", "request");
+
+            //reset the accelerometer
+            if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) { //if the acceleromter exists
+                sensorManager.unregisterListener(MainActivity.this);
+                sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+                sensorManager.registerListener(MainActivity.this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+            }
             lastPacket=System.currentTimeMillis();
             if (uri.indexOf("rawdata") > -1) { //recieved a data packet from the Fitbit, set the Fitbit status to good.
                 Log.i("data",parameters.toString());
