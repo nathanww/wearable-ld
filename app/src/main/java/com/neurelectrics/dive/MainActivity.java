@@ -133,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         wakeupHandler(); //start a loop to keep the device active
 
         //start monitoring the accelerometer
+        sensorManager=(SensorManager) getSystemService(SENSOR_SERVICE);
         if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) { //if the acceleromter exists
             sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
             sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
