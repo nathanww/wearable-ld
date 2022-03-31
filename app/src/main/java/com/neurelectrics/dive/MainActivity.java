@@ -11,6 +11,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.BatteryManager;
@@ -54,7 +58,7 @@ import fi.iki.elonen.NanoHTTPD;
 import static android.view.View.GONE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
     fitbitServer server;
     MediaPlayer startTraining;
     MediaPlayer training2;
@@ -64,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
     Timer trainingTimer;
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
-
+    SensorManager sensorManager;
+    double ax,ay,az=-1;   // accelerometer values
     boolean firstTraining=true;
     float sleepVolume=0;
     boolean enableSleepCueing=false;
@@ -127,7 +132,11 @@ public class MainActivity extends AppCompatActivity {
         wakeLock.acquire();
         wakeupHandler(); //start a loop to keep the device active
 
-
+        //start monitoring the accelerometer
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) { //if the acceleromter exists
+            sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+            sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        }
         //set up the lucid music
         lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.trainingsignal);
         lucidMusic.setVolume(1.0f,1.0f);
@@ -378,6 +387,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //acceleromter functions
+    @Override
+    public void onAccuracyChanged(Sensor arg0, int arg1) {
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+            ax=event.values[0];
+            ay=event.values[1];
+            az=event.values[2];
+        }
+    }
+
 
 
 
@@ -503,7 +526,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-                return(System.currentTimeMillis()+","+hr+","+String.format("%.2f", motionX)+","+String.format("%.2f", motionY)+","+String.format("%.2f", motionZ)+","+String.format("%.3f", gyrox)+","+String.format("%.3f", gyroy)+","+String.format("%.3f", gyroz)+","+String.format("%.2f", s3Prob)+","+String.format("%.2f", avgProb)+","+cueRunning+","+cueVolume+","+(elapsedTime));
+                return(System.currentTimeMillis()+","+hr+","+String.format("%.2f", motionX)+","+String.format("%.2f", motionY)+","+String.format("%.2f", motionZ)+","+String.format("%.3f", gyrox)+","+String.format("%.3f", gyroy)+","+String.format("%.3f", gyroz)+","+String.format("%.2f", s3Prob)+","+String.format("%.2f", avgProb)+","+cueRunning+","+cueVolume+","+(elapsedTime)+","+String.format("%.2f", ax)+","+String.format("%.2f", ay)+","+String.format("%.2f", az));
 
 
         }
