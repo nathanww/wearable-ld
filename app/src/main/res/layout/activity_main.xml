@@ -21,7 +21,7 @@
         android:id="@+id/connectionWarning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="⚠ We're not receiving data from the Fitbit. Try syncing the Fitbit and making sure the Dream app is running on the Fitbit."
+        android:text="⚠ We're not receiving data from the Fitbit. Try exiting the Dream app on the Fitbit, syncing the Fitbit, and restarting the Dream app."
         android:textColor="#FFFFFF"
         android:visibility="gone" />
 
