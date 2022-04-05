@@ -127,10 +127,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
 
         //keep the cpu on
-        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                "Dive::DataAcquistion");
-        wakeLock.acquire();
+        try {
+            PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                    "Dive::DataAcquistion");
+            wakeLock.acquire();
+        }
+        catch (Exception e) {// wakelock can cause an exception on some samsung devices??
+            Log.i("datacollector","Couldn't acquire wakelock");
+        }
         wakeupHandler(); //start a loop to keep the device active
 
         //start monitoring the accelerometer
@@ -305,9 +310,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void run() {
                 PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
                 Log.i("Dive","wakeup");
-                PowerManager.WakeLock powerOn = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "Dive:poweron");
-                powerOn.acquire();
-                powerOn.release();
+                try {
+                    PowerManager.WakeLock powerOn = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "Dive:poweron");
+                    powerOn.acquire();
+                    powerOn.release();
+                }
+                catch( Exception e) {//wakelock causes exception on some samsung devices?
+                    Log.i("datacollector","Couldn't acquire wakelock");
+                }
                 wakeuptimer.postDelayed(this, 30000);
 
             }

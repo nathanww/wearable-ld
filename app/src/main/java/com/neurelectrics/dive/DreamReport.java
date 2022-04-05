@@ -190,34 +190,35 @@ public class DreamReport extends AppCompatActivity {
             connectionAlert();
         }
         else { //if the internet is working, send the sleep data
-            if (sleepdata.length() < 900000) {
-                postSleepData(sleepdata, pid + "-night" + night+"-chunk0");
-            }
-            else {
-                postSleepData(sleepdata.substring(0,900000), pid + "-night" + night+"-chunk0");
-                String remainder=sleepdata.substring(900000);
-                if (remainder.length() < 900000) {
-                    postSleepData(remainder, pid + "-night" + night+"-chunk1");
-                }
-                else {
-                    postSleepData(remainder.substring(0,900000), pid + "-night" + night+"-chunk1");
-                    String remainder2=remainder.substring(900000);
-                    if (remainder2.length() < 900000) {
-                        postSleepData(remainder2, pid + "-night" + night + "-chunk2");
-                    }
-                    else {
-                        postSleepData(remainder2.substring(0,900000), pid + "-night" + night+"-chunk2");
-                        String remainder3=remainder2.substring(900000);
-                        if (remainder3.length() < 900000) {
-                            postSleepData(remainder3, pid + "-night" + night + "-chunk3");
+            try {
+                if (sleepdata.length() < 900000) {
+                    postSleepData(sleepdata, pid + "-night" + night + "-chunk0");
+                } else {
+                    postSleepData(sleepdata.substring(0, 900000), pid + "-night" + night + "-chunk0");
+                    String remainder = sleepdata.substring(900000);
+                    if (remainder.length() < 900000) {
+                        postSleepData(remainder, pid + "-night" + night + "-chunk1");
+                    } else {
+                        postSleepData(remainder.substring(0, 900000), pid + "-night" + night + "-chunk1");
+                        String remainder2 = remainder.substring(900000);
+                        if (remainder2.length() < 900000) {
+                            postSleepData(remainder2, pid + "-night" + night + "-chunk2");
+                        } else {
+                            postSleepData(remainder2.substring(0, 900000), pid + "-night" + night + "-chunk2");
+                            String remainder3 = remainder2.substring(900000);
+                            if (remainder3.length() < 900000) {
+                                postSleepData(remainder3, pid + "-night" + night + "-chunk3");
+                            } else {
+                                postSleepData(remainder3.substring(0, 900000), pid + "-night" + night + "-chunk3");
+                                postSleepData(remainder3.substring(900000, Math.max(900000 * 2, remainder3.length())), pid + "-night" + night + "-chunk4");
+                            }
                         }
-                        else {
-                            postSleepData(remainder3.substring(0,900000), pid + "-night" + night+"-chunk3");
-                            postSleepData(remainder3.substring(900000,900000*2), pid + "-night" + night+"-chunk4");
-                        }
+
                     }
 
                 }
+            }
+            catch (Exception e) { //something went wrong with slicing/sending the sleep data, nothing we can really do about it
 
             }
         }
