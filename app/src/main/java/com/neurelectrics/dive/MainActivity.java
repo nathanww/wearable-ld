@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         SharedPreferences.Editor editor = sharedPref.edit();
         //get the algorithm type to use--if they are assigned to algo 1 use the short interval, otherwise use the long interval
         if (sharedPref.getBoolean("algo", false)) {
-            ONSET_THRESH=0.95f;
+            ONSET_THRESH=0.8f;
             BUFFER_SIZE=60;
         }
 
