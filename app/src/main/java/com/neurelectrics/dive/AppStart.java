@@ -15,7 +15,6 @@ public class AppStart extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
 
         int taskStatus = sharedPref.getInt("taskStatus", 0); //get where we are in the experiment
-
         Log.i("taskstatus",""+taskStatus);
 
         Log.i("task status",""+taskStatus);

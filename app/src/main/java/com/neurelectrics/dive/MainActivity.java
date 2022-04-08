@@ -182,59 +182,73 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick(View v) {
                 if (isPluggedIn()) {
-                    startButton.setVisibility(View.GONE);
-                    abortButton.setVisibility(View.VISIBLE);
-                    TextView instr = (TextView) findViewById(R.id.appRunningHeader);
-                    instr.setVisibility(View.VISIBLE);
-                    TextView startInstructions = (TextView) findViewById(R.id.startInstructions);
-                    startInstructions.setVisibility(GONE);
-                    TextView header = (TextView) findViewById(R.id.header);
-                    header.setVisibility(GONE);
-                    if (firstTraining) {
-                        startTraining = MediaPlayer.create(MainActivity.this, R.raw.training1);
-                        training2 = MediaPlayer.create(MainActivity.this, R.raw.training2);
-                    } else {
-                        startTraining = MediaPlayer.create(MainActivity.this, R.raw.experimental);
-                        training2 = MediaPlayer.create(MainActivity.this, R.raw.blank);
-
+                    if (System.currentTimeMillis() > lastPacket+10000) { //display an error if we don't have a fitbit connection
+                        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                        alertDialog.setTitle("Cannot start");
+                        alertDialog.setMessage("The Fitbit is not connected. Make sure the Dream app is running on the Fitbit. If the Dream app is running, try exiting it, syncing the Fitbit, and restarting the Dream app.");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
                     }
+                    else { //Fitbit is connected normally
+                        startButton.setVisibility(View.GONE);
+                        abortButton.setVisibility(View.VISIBLE);
+                        TextView instr = (TextView) findViewById(R.id.appRunningHeader);
+                        instr.setVisibility(View.VISIBLE);
+                        TextView startInstructions = (TextView) findViewById(R.id.startInstructions);
+                        startInstructions.setVisibility(GONE);
+                        TextView header = (TextView) findViewById(R.id.header);
+                        header.setVisibility(GONE);
+                        if (firstTraining) {
+                            startTraining = MediaPlayer.create(MainActivity.this, R.raw.training1);
+                            training2 = MediaPlayer.create(MainActivity.this, R.raw.training2);
+                        } else {
+                            startTraining = MediaPlayer.create(MainActivity.this, R.raw.experimental);
+                            training2 = MediaPlayer.create(MainActivity.this, R.raw.blank);
 
-
-                    lucidMusic.setLooping(false);
-
-                    lucidMusic.setVolume(0.8f, 0.8f);
-                    signalcue = MediaPlayer.create(MainActivity.this, R.raw.atsignal);
-                    signalcue.setLooping(false);
-                    noguidance = MediaPlayer.create(MainActivity.this, R.raw.cueswoguidance);
-                    signalcue.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //if delay item is 4, meaning we just played the instructions for the fourth time, then start the cues without guidance
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            if ((firstTraining && delayItem == 4) || (!firstTraining && delayItem == 1)) {
-                                noguidance.start();
-                            }
                         }
-                    });
-                    startTraining.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //when the first part of the instrutionas are complete, star tthe second part
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
 
-                            training2.start();
-                        }
-                    });
 
-                    training2.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //when the first part of the instrutionas are complete, star tthe second part
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            trainingTimer = new Timer();
-                            trainingTimer.schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    handleTrainingSounds(); //start the period where we just play cues and sintructions with long pauses in between.
+                        lucidMusic.setLooping(false);
+
+                        lucidMusic.setVolume(0.8f, 0.8f);
+                        signalcue = MediaPlayer.create(MainActivity.this, R.raw.atsignal);
+                        signalcue.setLooping(false);
+                        noguidance = MediaPlayer.create(MainActivity.this, R.raw.cueswoguidance);
+                        signalcue.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //if delay item is 4, meaning we just played the instructions for the fourth time, then start the cues without guidance
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                if ((firstTraining && delayItem == 4) || (!firstTraining && delayItem == 1)) {
+                                    noguidance.start();
                                 }
-                            }, 10000, 1000);
-                        }
-                    });
-                    startTraining.start();
+                            }
+                        });
+                        startTraining.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //when the first part of the instrutionas are complete, star tthe second part
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+
+                                training2.start();
+                            }
+                        });
+
+                        training2.setOnCompletionListener(new MediaPlayer.OnCompletionListener() { //when the first part of the instrutionas are complete, star tthe second part
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                trainingTimer = new Timer();
+                                trainingTimer.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        handleTrainingSounds(); //start the period where we just play cues and sintructions with long pauses in between.
+                                    }
+                                }, 10000, 1000);
+                            }
+                        });
+                        startTraining.start();
+                    }
                 }
                 else {//phone is not connected to power, so show an alert
                     AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
