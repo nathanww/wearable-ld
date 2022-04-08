@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         //if this is the first night, or this is an active participant, then turn the sham mode off
-        if (sharedPref.getInt("currentNight",0) == 0 || (sharedPref.getBoolean("pType",true)) || sharedPref.getInt("currentNight",0) > 6) {
+        if ((sharedPref.getBoolean("pType",true)) || sharedPref.getInt("currentNight",0) > 6) {
             shamNight=false;
         }
     }
