@@ -32,6 +32,8 @@ public class Done extends AppCompatActivity {
                                               editor.putInt("taskStatus",4);
                                               int currentNight=sharedPref.getInt("currentNight",0);
                                               editor.putInt("currentNight",currentNight+1);
+                                              editor.putFloat("highestVol", -1);
+                                              editor.putInt("totalCues",0);
                                               editor.commit();
                                               finish();
                                           }
