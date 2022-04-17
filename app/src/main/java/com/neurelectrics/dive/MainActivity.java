@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         mainContext=this;
         //set up the lucid music
-        lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.trainingsignal);
+        lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.trainingsignalshort);
         lucidMusic.setVolume(1.0f,1.0f);
         //start the Fitbit server
         server = new fitbitServer();
