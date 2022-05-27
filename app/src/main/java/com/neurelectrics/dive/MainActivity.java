@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick(View v) {
                 if (isPluggedIn()) {
-                    if (System.currentTimeMillis() > lastPacket+10000) { //display an error if we don't have a fitbit connection
+                    if (System.currentTimeMillis() > lastPacket+3000) { //display an error if we don't have a fitbit connection
                         AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
                         alertDialog.setTitle("Cannot start");
                         alertDialog.setMessage("The Fitbit is not connected. Make sure the Dream app is running on the Fitbit. If the Dream app is running, try exiting it, syncing the Fitbit, and restarting the Dream app.");
@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     public void run() {
 
                         TextView connectionWarning=(TextView) findViewById(R.id.connectionWarning);
-                        if (System.currentTimeMillis() > lastPacket+10000 && sharedPref.getInt("taskStatus",0) < 5) { //show the message if we have a connection problem and also we're not in sleep mode (if the connection dropped during sleep there's no point in bothering the user about it)
+                        if (System.currentTimeMillis() > lastPacket+3000 && sharedPref.getInt("taskStatus",0) < 5) { //show the message if we have a connection problem and also we're not in sleep mode (if the connection dropped during sleep there's no point in bothering the user about it)
                             connectionWarning.setVisibility(View.VISIBLE);
                         }
                         else {
@@ -293,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 });
 
             }
-        }, 10000, 1000);
+        }, 3000, 1000);
 
 
     //jump back into sleep mode if the task status is 5
