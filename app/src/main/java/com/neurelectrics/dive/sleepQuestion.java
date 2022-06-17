@@ -77,7 +77,7 @@ public class sleepQuestion extends AppCompatActivity {
         if (pid == -1) {  //no existing ID
             Random rand = new Random();
             pid=rand.nextInt(2147483647);
-
+            editor.putInt("pid",pid);
             editor.putBoolean("algo",false);
             //set the participant type (control or real)
             editor.putBoolean("pType",rand.nextBoolean());
