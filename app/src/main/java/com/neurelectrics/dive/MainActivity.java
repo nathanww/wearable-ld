@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     boolean enableSleepCueing=false;
     float oldx,oldy,oldz=0; //variables to detect sudden motion
     float MOTION_THRESH=5f; //how much motion is considered an arousal
-    float ONSET_THRESH=0.15f; //how high does the rem probability have to be to trigger cueing?
+    float ONSET_THRESH=0.5f; //how high does the rem probability have to be to trigger cueing?
     float cueVolume=0.0f;
     float CUE_VOLUME_INC=0.00075f; //how much does the cue volume increase ach second?
     int BUFFER_SIZE=360; //HOW MANY TO AVERAGE?
@@ -158,11 +158,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Log.w("Httpd", "Web server initialized.");
         SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        //get the algorithm type to use--if they are assigned to algo 1 use the short interval, otherwise use the long interval
-        if (sharedPref.getBoolean("algo", false)) {
-            ONSET_THRESH=0.8f;
-            BUFFER_SIZE=60;
-        }
+
 
 
         //get the training status--have we done the training before?
@@ -474,6 +470,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 gyrox = Float.parseFloat(stageData.split(":")[5].split(",")[0]);
                 gyroy = Float.parseFloat(stageData.split(":")[6].split(",")[0]);
                 gyroz = Float.parseFloat(stageData.split(":")[7].split(",")[0]);
+                if (gyrox < -90) { //this can only happen if we are on a device with no gyro, this activates the more relaxed REM criteria
+                    ONSET_THRESH=0.15f;
+                }
                 probBuffer.add(s3Prob);
                 if (probBuffer.size() > BUFFER_SIZE) {
                     probBuffer.remove(0);
