@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/yesFitbit"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FitbitTest">
@@ -23,32 +24,67 @@
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Connect your Fitbit "
+                android:text="Do you have a Fitbit smartwatch?"
                 android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="This app requires a companion app to be installed and running on your Fitbit to detect REM sleep. If you haven't already installed it, tap the button below to install the Dream app.\n\nThis app is compatible with the Fitbit Ionic, Fitbit Versa 1/2/3/SE, Versa Lite, and Fitbit Sense" />
+                android:text="If you have a Fitbit smartwatch, we can use it to improve REM detection accuracy. The app will still work even if you don't have a compatible smartwatch.\n\nThis app is compatible with the Fitbit Ionic, Fitbit Versa 1/2/3/SE, Versa Lite, and Fitbit Sense 1 and 2" />
 
-            <Button
-                android:id="@+id/fitbitInstall"
+            <LinearLayout
+                android:id="@+id/fitbitQuestion"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Install app from Fitbit gallery" />
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text='After the app is installed,start it on your Fitbit and tap the "Connect Fitbit" button' />
+                <Button
+                    android:id="@+id/yes_fitbit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Yes, set up Fitbit" />
 
-            <Button
-                android:id="@+id/connectButton"
+                <Button
+                    android:id="@+id/no_fitbit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No, continue without Fitbit" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fitbitSetup"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Connect Fitbit" />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/install_fitbit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tap the button below to open the Fitbit gallery and install the app. Make sure all permissions are enabled." />
+
+                <Button
+                    android:id="@+id/fitbitInstall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Install app from Fitbit gallery" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text='After the app is installed,start it on your Fitbit and tap the "Connect Fitbit" button' />
+
+                <Button
+                    android:id="@+id/connectButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Connect Fitbit" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <TextView
