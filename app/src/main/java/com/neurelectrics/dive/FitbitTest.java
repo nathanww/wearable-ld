@@ -83,6 +83,47 @@ void confirmFitbit() {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fitbit_test);
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        //buttons for deciding if you want to use the Fitbit
+        Button yes_fitbit = (Button) findViewById(R.id.yes_fitbit);
+        yes_fitbit.setOnClickListener(new View.OnClickListener() {
+                                       @Override
+                                       public void onClick(View v) {
+                                           Log.i("fitbit","yes");
+                                                   LinearLayout fitbitSetup = (LinearLayout) findViewById(R.id.fitbitSetup);
+                                                   fitbitSetup.setVisibility(View.VISIBLE);
+                                                   LinearLayout fitbitQuestion = (LinearLayout) findViewById(R.id.fitbitQuestion);
+                                                   fitbitQuestion.setVisibility(View.GONE);
+                                                   editor.putBoolean("fitbitMode",true);
+
+
+
+
+                                       }
+                                   }
+        );
+        Button no_fitbit = (Button) findViewById(R.id.no_fitbit);
+        no_fitbit.setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View v) {
+                                              runOnUiThread(new Runnable() {
+                                                  @Override
+                                                  public void run() {
+
+                                                      editor.putBoolean("fitbitMode",false);
+                                                      editor.putInt("taskStatus",2);
+                                                      editor.commit();
+                                                      Log.i("fitbit","no");
+                                                      finish();
+                                                  }
+
+                                              });
+
+
+                                          }
+                                      }
+        );
 
         Button install = (Button) findViewById(R.id.fitbitInstall);
         install.setOnClickListener(new View.OnClickListener() {

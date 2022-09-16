@@ -20,24 +20,24 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Do you have a Fitbit smartwatch?"
-                android:textSize="24sp" />
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="If you have a Fitbit smartwatch, we can use it to improve REM detection accuracy. The app will still work even if you don't have a compatible smartwatch.\n\nThis app is compatible with the Fitbit Ionic, Fitbit Versa 1/2/3/SE, Versa Lite, and Fitbit Sense 1 and 2" />
-
             <LinearLayout
                 android:id="@+id/fitbitQuestion"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Do you have a Fitbit smartwatch?"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="If you have a Fitbit smartwatch, we can use it to improve REM detection accuracy. The app will still work even if you don't have a compatible smartwatch.\n\nThis app is compatible with the Fitbit Ionic and all Versa and Sense models." />
 
                 <Button
                     android:id="@+id/yes_fitbit"
@@ -63,13 +63,15 @@
                     android:id="@+id/install_fitbit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Tap the button below to open the Fitbit gallery and install the app. Make sure all permissions are enabled." />
+                    android:text="Tap the button below to open the Fitbit gallery and install the app. Make sure to allow all permissions when you install the Fitbit app"
+                    android:visibility="visible" />
 
                 <Button
                     android:id="@+id/fitbitInstall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Install app from Fitbit gallery" />
+                    android:text="Install app from Fitbit gallery"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/textView3"
@@ -81,7 +83,8 @@
                     android:id="@+id/connectButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Connect Fitbit" />
+                    android:text="Connect Fitbit"
+                    android:visibility="visible" />
 
             </LinearLayout>
 
