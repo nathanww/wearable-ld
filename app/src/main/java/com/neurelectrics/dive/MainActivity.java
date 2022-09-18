@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     SensorManager sensorManager;
     Context mainContext;
     double ax,ay,az=-1;   // accelerometer values
+    double oldax,olday,oldaz=-1;   // accelerometer values
     boolean firstTraining=true;
     float sleepVolume=0;
     boolean enableSleepCueing=false;
@@ -80,16 +81,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     float cueVolume=0.0f;
     float CUE_VOLUME_INC=0.00075f; //how much does the cue volume increase ach second?
     int BUFFER_SIZE=360; //HOW MANY TO AVERAGE?
+    int MOTION_BUFFER_SIZE=800; //how many seconds to look at when counting motion
     boolean conFixArm=false; //whether the app will try to restart itself on exit, set to true if we need to restart the Fitbit app to fix a connection issue
     boolean DEBUG_MODE=false;
 
     boolean shamNight=true;
     boolean cueRunning=false;
     int ONSET_TIME=14400; //minimum time the app must be running before it will cue
+    int MOTION_ONSET_TIME=14400;
     int BACKOFF_TIME=600;
     int elapsedTime=0;
     int lastArousal=(0-BACKOFF_TIME);
     ArrayList<Float> probBuffer=new ArrayList<Float>(); //buffer for averaging REM probabilities
+    ArrayList<Integer> motionBuffer=new ArrayList<Integer>(); //buffer for averaging periods with no detectable motion
 
 
 
@@ -426,7 +430,83 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
+    private class accServer { //fitbitless server that uses the phone's accelerometer instead
+        SharedPreferences sharedPref;
+        SharedPreferences.Editor editor;
+        Handler packetHandler;
+        Runnable run;
+        public accServer() {
+            sharedPref= getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+            editor=sharedPref.edit();
+            packetHandler=new Handler();
+            Log.i("accserver","accserver initialized");
+        }
+        private int sum(ArrayList<Integer> data) {
+            int sum = 0;
+            for (int i=0; i< data.size(); i++) {
+                sum += 1;
+            }
+            return sum;
+        }
 
+        public void start() { //when accserver is started, poll the phone's sensors every second and act base don that
+            packetHandler.postDelayed( run = new Runnable() {
+                public void run() {
+                    //reset the accelerometer
+                    if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) { //if the acceleromter exists
+                        sensorManager.unregisterListener(MainActivity.this);
+                        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+                        sensorManager.registerListener(MainActivity.this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+                    }
+                    elapsedTime++;
+                    double result=Math.abs(ax-oldax)+Math.abs(ay-olday)+Math.abs(az-oldaz);
+                    oldax=ax;
+                    olday=ay;
+                    oldaz=az;
+                    if (result < 0.01) { //this counts as "no motion"
+                        motionBuffer.add(1);
+                    }
+                    else {
+                        motionBuffer.add(0);
+                    }
+                    if (motionBuffer.size() > MOTION_BUFFER_SIZE) {
+                        motionBuffer.remove(0);
+                    }
+                    int count=sum(motionBuffer);
+                    if (elapsedTime >= MOTION_ONSET_TIME) { //we are in the window where cueing can start
+                        if (count >= MOTION_THRESH && elapsedTime >= ONSET_TIME && elapsedTime - lastArousal >= BACKOFF_TIME && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
+                            Log.i("cuedata", "startcue-motion");
+
+                            if (!cueRunning && !shamNight) {
+                                cueRunning = true;
+                                lucidMusic = MediaPlayer.create(MainActivity.this, R.raw.combinedsignal);
+                                lucidMusic.setVolume(cueVolume, cueVolume);
+                                lucidMusic.setLooping(true);
+
+                                lucidMusic.start();
+
+                            }
+
+                        } else if (elapsedTime - lastArousal < BACKOFF_TIME || !enableSleepCueing) { //arousal, stop the cues as needed
+
+                            if (cueRunning && !shamNight) {
+                                lucidMusic.stop();
+                                cueRunning = false;
+                            }
+                        }
+                    }
+
+                    String status="A,"+System.currentTimeMillis()+","+cueRunning+","+cueVolume+","+(elapsedTime)+","+String.format("%.5f", ax)+","+String.format("%.5f", ay)+","+String.format("%.5f", az)+","+count;
+                    String current=sharedPref.getString("sleepdata","");
+                    editor.putString("sleepdata",current+"##"+status);
+                    editor.apply();
+                    packetHandler.postDelayed(run, 1000);
+                }
+            }, 10);
+
+        }
+
+    }
 
 
     //fitbitServer handles getting data from the fitbit which sends it on port 8085
@@ -449,6 +529,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
             return sum / data.size();
         }
+
+
         String handleStaging(String stageData) {
             elapsedTime++;
             float s3Prob=-1;
