@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     int ONSET_TIME=14400; //minimum time the app must be running before it will cue
     int MOTION_ONSET_TIME=14400;
     int BACKOFF_TIME=600;
-    float MOTION_PERCENT=0.95f; //needs to be in the bottom 5% of motion to start cueing
+    float MOTION_PERCENT=0.05f; //percentile for epochs with no motion. 0.05 means that 95% of samples in the baseline have FEWER epochs with no motion
     int elapsedTime=0;
     int lastArousal=(0-BACKOFF_TIME);
     boolean acc_mode_escalate=true; //does the volume escalate in accelerometer mode? This is randomly assinged
@@ -178,6 +178,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             acc_mode_escalate=sharedPref.getBoolean("acc_mode_escalate",false);
             accserver=new accServer();
             accserver.start();
+            //display the messages about phone position
+            TextView pib=(TextView) findViewById(R.id.phoneInBed);
+            pib.setVisibility(View.VISIBLE);
         }
 
 
@@ -474,7 +477,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         private float compare(ArrayList<Integer> data,int compvalue) {
             float sum = 0;
             for (int i=0; i< data.size(); i++) {
-                if (data.get(i) >= compvalue) {
+                if (data.get(i) > compvalue) { //we use "greater than" rather than greater than or equal so if the acceleormeter gets stuck people will still get cued
                     sum++;
                 }
             }
@@ -512,7 +515,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     float comparison=compare(baselineBuffer,count);
                     Log.i("motioncount",""+count);
                     if (elapsedTime >= MOTION_ONSET_TIME) { //we are in the window where cueing can start
-                        if (comparison >= MOTION_PERCENT  && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
+                        if (comparison <= MOTION_PERCENT  && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
                             Log.i("cuedata", "startcue-motion");
 
                             if (!cueRunning && !shamNight) {
@@ -527,14 +530,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             if (acc_mode_escalate) { //if the volume is set to escalate, then do that
                                 soundVolume = soundVolume + CUE_VOLUME_INC;
                             }
-                                editor.putFloat("highestVol", soundVolume);
+                                if (soundVolume > sharedPref.getFloat("highestVol",0.0f)) {
+                                    editor.putFloat("highestVol", soundVolume);
+                                }
                                 editor.putInt("totalCues",sharedPref.getInt("totalCues",0)+1);
                                 editor.apply();
                             }
 
-                        } else if (!enableSleepCueing) { //arousal, stop the cues as needed
-
-                            if (cueRunning && !shamNight) {
+                        } else  { //REM end?
+                        soundVolume=sharedPref.getFloat("wakeSoundThresh",0.01f);
+                        if (cueRunning && !shamNight) {
                                 //lucidMusic.stop();
                                 cueRunning = false;
                             }
