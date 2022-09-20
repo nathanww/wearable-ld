@@ -81,6 +81,8 @@ public class sleepQuestion extends AppCompatActivity {
             editor.putBoolean("algo",false);
             //set the participant type (control or real)
             editor.putBoolean("pType",rand.nextBoolean());
+            //set the escalation type for accelerometer mode (escalate or don't)
+            editor.putBoolean("acc_mode_escalate",rand.nextBoolean());
             editor.commit();
         }
         String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6R1LomQ0Zmj6Ts2?participantID="+pid;

@@ -17,7 +17,7 @@ public class AppStart extends AppCompatActivity {
         int taskStatus = sharedPref.getInt("taskStatus", 0); //get where we are in the experiment
         Log.i("taskstatus",""+taskStatus);
         Log.i("task status",""+taskStatus);
-        taskStatus=5;
+        taskStatus=6;
         if (taskStatus == 0) { //consent form has not been filled out
             Intent getConsent = new Intent(this, ConsentActivity.class);
             startActivity(getConsent); //consent is important
