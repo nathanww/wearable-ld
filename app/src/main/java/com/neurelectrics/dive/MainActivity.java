@@ -524,7 +524,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                 lucidMusic.setVolume(soundVolume, soundVolume);
                                 lucidMusic.setLooping(true);
 
-                               // lucidMusic.start();
+                                lucidMusic.start();
 
                             }
                             if (acc_mode_escalate) { //if the volume is set to escalate, then do that
@@ -540,7 +540,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         } else  { //REM end?
                         soundVolume=sharedPref.getFloat("wakeSoundThresh",0.01f);
                         if (cueRunning && !shamNight) {
-                                //lucidMusic.stop();
+                                lucidMusic.stop();
                                 cueRunning = false;
                             }
                         }
