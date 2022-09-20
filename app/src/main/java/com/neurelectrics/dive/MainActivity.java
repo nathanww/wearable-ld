@@ -60,6 +60,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     fitbitServer server;
+    accServer accserver;
     MediaPlayer startTraining;
     MediaPlayer training2;
     MediaPlayer lucidMusic;
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     double oldax,olday,oldaz=-1;   // accelerometer values
     boolean firstTraining=true;
     float sleepVolume=0;
-    boolean enableSleepCueing=false;
+    boolean enableSleepCueing=true;
     float oldx,oldy,oldz=0; //variables to detect sudden motion
     float MOTION_THRESH=5f; //how much motion is considered an arousal
     float ONSET_THRESH=0.5f; //how high does the rem probability have to be to trigger cueing?
@@ -83,8 +84,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     int BUFFER_SIZE=360; //HOW MANY TO AVERAGE?
     int MOTION_BUFFER_SIZE=800; //how many seconds to look at when counting motion
     boolean conFixArm=false; //whether the app will try to restart itself on exit, set to true if we need to restart the Fitbit app to fix a connection issue
-    boolean DEBUG_MODE=false;
-
+    boolean DEBUG_MODE=true;
+    boolean fitbitMode;
     boolean shamNight=true;
     boolean cueRunning=false;
     int ONSET_TIME=14400; //minimum time the app must be running before it will cue
@@ -152,16 +153,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //set up the lucid music
         lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.trainingsignalshort);
         lucidMusic.setVolume(1.0f,1.0f);
-        //start the Fitbit server
-        server = new fitbitServer();
-        try {
-            server.start();
-        } catch(IOException ioe) {
-            Log.e("Httpd", ioe.getMessage());
-        }
-        Log.w("Httpd", "Web server initialized.");
+
+        //get ether this is a Fitbit user or not
         SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
+        fitbitMode=sharedPref.getBoolean("fitbitMode",true);
+        fitbitMode=false;
+        if (fitbitMode) {
+            //if user is in fitbit mode, start the Fitbit server
+            server = new fitbitServer();
+            try {
+                server.start();
+            } catch (IOException ioe) {
+                Log.e("Httpd", ioe.getMessage());
+            }
+            Log.w("Httpd", "Web server initialized.");
+        }
+        else { //otherwise, start the acceleromter server
+            accserver=new accServer();
+            accserver.start();
+        }
 
 
 
@@ -182,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick(View v) {
                 if (isPluggedIn()) {
-                    if (System.currentTimeMillis() > lastPacket+3000) { //display an error if we don't have a fitbit connection
+                    if (System.currentTimeMillis() > lastPacket+3000 && fitbitMode) { //display an error if we don't have a fitbit connection and we should
                         AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
                         alertDialog.setTitle("Cannot start");
                         alertDialog.setMessage("The Fitbit is not connected. Make sure the Dream app is running on the Fitbit. If the Dream app is running, try exiting it, syncing the Fitbit, and restarting the Dream app.");
@@ -283,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     public void run() {
 
                         TextView connectionWarning=(TextView) findViewById(R.id.connectionWarning);
-                        if (System.currentTimeMillis() > lastPacket+3000 && sharedPref.getInt("taskStatus",0) < 5) { //show the message if we have a connection problem and also we're not in sleep mode (if the connection dropped during sleep there's no point in bothering the user about it)
+                        if (System.currentTimeMillis() > lastPacket+3000 && sharedPref.getInt("taskStatus",0) < 5 && fitbitMode) { //show the message if we have a connection problem and also we're not in sleep mode (if the connection dropped during sleep there's no point in bothering the user about it)
                             connectionWarning.setVisibility(View.VISIBLE);
                         }
                         else {
@@ -444,7 +455,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         private int sum(ArrayList<Integer> data) {
             int sum = 0;
             for (int i=0; i< data.size(); i++) {
-                sum += 1;
+
+                sum += data.get(i);
             }
             return sum;
         }
@@ -463,6 +475,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     oldax=ax;
                     olday=ay;
                     oldaz=az;
+                    Log.i("motionresult",""+result);
                     if (result < 0.01) { //this counts as "no motion"
                         motionBuffer.add(1);
                     }
@@ -473,6 +486,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         motionBuffer.remove(0);
                     }
                     int count=sum(motionBuffer);
+                    Log.i("motioncount",""+count);
                     if (elapsedTime >= MOTION_ONSET_TIME) { //we are in the window where cueing can start
                         if (count >= MOTION_THRESH && elapsedTime >= ONSET_TIME && elapsedTime - lastArousal >= BACKOFF_TIME && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
                             Log.i("cuedata", "startcue-motion");
