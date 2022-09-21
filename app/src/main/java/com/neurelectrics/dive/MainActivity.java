@@ -515,9 +515,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     float comparison=compare(baselineBuffer,count);
                     Log.i("motioncount",""+count);
                     if (elapsedTime >= MOTION_ONSET_TIME) { //we are in the window where cueing can start
-                        if (comparison <= MOTION_PERCENT  && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
+                        if (comparison <= MOTION_PERCENT && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
                             Log.i("cuedata", "startcue-motion");
-
+                            maximizeVolume();
                             if (!cueRunning && !shamNight) {
                                 cueRunning = true;
                                 lucidMusic = MediaPlayer.create(MainActivity.this, R.raw.combinedsignal);
@@ -530,20 +530,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             if (acc_mode_escalate) { //if the volume is set to escalate, then do that
                                 soundVolume = soundVolume + CUE_VOLUME_INC;
                             }
-                                if (soundVolume > sharedPref.getFloat("highestVol",0.0f)) {
-                                    editor.putFloat("highestVol", soundVolume);
-                                }
-                                editor.putInt("totalCues",sharedPref.getInt("totalCues",0)+1);
-                                editor.apply();
+                            if (soundVolume > sharedPref.getFloat("highestVol", 0.0f)) {
+                                editor.putFloat("highestVol", soundVolume);
                             }
+                            editor.putInt("totalCues", sharedPref.getInt("totalCues", 0) + 1);
+                            editor.apply();
 
-                        } else  { //REM end?
-                        soundVolume=sharedPref.getFloat("wakeSoundThresh",0.01f);
-                        if (cueRunning && !shamNight) {
+
+                        } else { //REM end?
+                            soundVolume = sharedPref.getFloat("wakeSoundThresh", 0.01f);
+                            if (cueRunning && !shamNight) {
                                 lucidMusic.stop();
                                 cueRunning = false;
                             }
                         }
+                    }
 
 
                     String status="A,"+System.currentTimeMillis()+","+cueRunning+","+soundVolume+","+(elapsedTime)+","+String.format("%.5f", ax)+","+String.format("%.5f", ay)+","+String.format("%.5f", az)+","+count+","+comparison;
