@@ -89,9 +89,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     boolean shamNight=true;
     boolean cueRunning=false;
     int ONSET_TIME=14400; //minimum time the app must be running before it will cue
-    int MOTION_ONSET_TIME=14400;
+    int MOTION_ONSET_TIME=18000;
     int BACKOFF_TIME=600;
-    float MOTION_PERCENT=0.05f; //percentile for epochs with no motion. 0.05 means that 95% of samples in the baseline have FEWER epochs with no motion
+    float MOTION_PERCENT=0.1f; //percentile for epochs with no motion. 0.05 means that 90% of samples in the baseline have FEWER epochs with no motion
     int elapsedTime=0;
     int lastArousal=(0-BACKOFF_TIME);
     boolean acc_mode_escalate=true; //does the volume escalate in accelerometer mode? This is randomly assinged
@@ -327,8 +327,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if ((sharedPref.getBoolean("pType",true)) || sharedPref.getInt("currentNight",0) > 6) {
             shamNight=false;
         }
-        //debug
-        shamNight=false;
+
     }
     private void fixConnection() {
         conFixArm=true; //enable app to self-restart
@@ -458,6 +457,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Handler packetHandler;
         Runnable run;
         float soundVolume;
+        boolean everCued=false;
         public accServer() {
             sharedPref= getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
             editor=sharedPref.edit();
@@ -515,8 +515,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     float comparison=compare(baselineBuffer,count);
                     Log.i("motioncount",""+count);
                     if (elapsedTime >= MOTION_ONSET_TIME) { //we are in the window where cueing can start
-                        if (comparison <= MOTION_PERCENT && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
+                        //cueing can start if we exceed the threhsold, or if we ever exceedd the threshold and are running in no-offset mode
+                        if ((comparison <= MOTION_PERCENT || (everCued && sharedPref.getBoolean("acc_mode_offset",true)==false)) && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
                             Log.i("cuedata", "startcue-motion");
+                            everCued=true;
                             maximizeVolume();
                             if (!cueRunning && !shamNight) {
                                 cueRunning = true;
