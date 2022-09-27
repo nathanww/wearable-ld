@@ -514,7 +514,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     }
                     float comparison=compare(baselineBuffer,count);
                     Log.i("motioncount",""+count);
-                    if (elapsedTime >= MOTION_ONSET_TIME) { //we are in the window where cueing can start
+                    if (elapsedTime >= MOTION_ONSET_TIME && !shamNight) {  //we are in the window where cueing can start
                         //cueing can start if we exceed the threhsold, or if we ever exceedd the threshold and are running in no-offset mode
                         if ((comparison <= MOTION_PERCENT || (everCued && sharedPref.getBoolean("acc_mode_offset",true)==false)) && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
                             Log.i("cuedata", "startcue-motion");
