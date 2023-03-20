@@ -88,8 +88,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     boolean fitbitMode;
     boolean shamNight=true;
     boolean cueRunning=false;
-    int ONSET_TIME=14400; //minimum time the app must be running before it will cue
-    int MOTION_ONSET_TIME=12600;
+    int ONSET_TIME; //minimum time the app must be running before it will cue
     int BACKOFF_TIME=600;
     float MOTION_PERCENT=0.1f; //percentile for epochs with no motion. 0.05 means that 90% of samples in the baseline have FEWER epochs with no motion
     int elapsedTime=0;
@@ -182,6 +181,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             TextView pib=(TextView) findViewById(R.id.phoneInBed);
             pib.setVisibility(View.VISIBLE);
         }
+
+        //set the cue onset time to 6 hours to start with, this can get shortened up to 5 hours if the person is not getting cues
+        ONSET_TIME=sharedPref.getInt("onsetTime",21600);
 
 
 
@@ -286,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
         if (DEBUG_MODE) {
-            elapsedTime=MOTION_ONSET_TIME+50;
+            elapsedTime=ONSET_TIME+50;
             BACKOFF_TIME=10;
             ONSET_THRESH=0;
             MOTION_THRESH=800F;
@@ -514,7 +516,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     }
                     float comparison=compare(baselineBuffer,count);
                     Log.i("motioncount",""+count);
-                    if (elapsedTime >= MOTION_ONSET_TIME && !shamNight) {  //we are in the window where cueing can start
+                    if (elapsedTime >= ONSET_TIME && !shamNight) {  //we are in the window where cueing can start
                         //cueing can start if we exceed the threhsold, or if we ever exceedd the threshold and are running in no-offset mode
                         if ((comparison <= MOTION_PERCENT || (everCued && sharedPref.getBoolean("acc_mode_offset",true)==false)) && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
                             Log.i("cuedata", "startcue-motion");
