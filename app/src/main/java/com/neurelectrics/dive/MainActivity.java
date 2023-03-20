@@ -381,6 +381,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                                    public void onClick(View v) {
                                                     editor.putInt("taskStatus",6);
                                                     editor.putLong("startedTime",System.currentTimeMillis());
+                                                    if (sharedPref.getInt("totalCues", 0) == 0 && ONSET_TIME > 18000) {//no cues were delivered, so make the onset time earlier
+                                                        editor.putInt("onsetTime",ONSET_TIME-1800);
+                                                    }
                                                     editor.commit();
                                                     finish();
                                                    }
@@ -414,11 +417,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
             }
                 else { //not the first training
-                    if (delayItem == 0) {
-                        signalcue.start();
-                    }
+                if (delayItem == 0) {
+                    signalcue.start();
                 }
-
+            }
 
             trainingEpochs=1;
             if (delayItem < delayTimes.length-1) {
