@@ -37,7 +37,7 @@
                     android:id="@+id/textView2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="If you have a Fitbit smartwatch, we can use it to improve REM detection accuracy. The app will still work even if you don't have a compatible smartwatch.\n\nThis app is compatible with the Fitbit Ionic and all Versa and Sense models." />
+                    android:text="If you have a Fitbit smartwatch, we can use it to improve REM detection accuracy. The app will still work even if you don't have a compatible smartwatch.\n\nThis app is compatible with the Fitbit Ionic, Versa 1/2/3/Lite and Fitbit Sense models. The Versa 4 and Sense 2 are not supported." />
 
                 <Button
                     android:id="@+id/yes_fitbit"

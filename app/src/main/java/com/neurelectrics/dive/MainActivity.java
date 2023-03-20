@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     boolean shamNight=true;
     boolean cueRunning=false;
     int ONSET_TIME=14400; //minimum time the app must be running before it will cue
-    int MOTION_ONSET_TIME=18000;
+    int MOTION_ONSET_TIME=12600;
     int BACKOFF_TIME=600;
     float MOTION_PERCENT=0.1f; //percentile for epochs with no motion. 0.05 means that 90% of samples in the baseline have FEWER epochs with no motion
     int elapsedTime=0;

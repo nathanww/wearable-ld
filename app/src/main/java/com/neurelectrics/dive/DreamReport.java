@@ -43,7 +43,7 @@ import java.util.Map;
 public class DreamReport extends AppCompatActivity {
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
-    int APP_VERSION=17;
+    int APP_VERSION=19;
     long startedTime=0;
     @Override
     public void onBackPressed() {
@@ -229,7 +229,7 @@ public class DreamReport extends AppCompatActivity {
         //send the sleep data to qualtrics
         Log.i("dreamreport","Loading qualtrics page,"+sleepdata.length());
         //String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6FCssjBFQNC95j0?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getBoolean("pType",false)+"&night="+sharedPref.getInt("currentNight",-1)+"&arousal="+sharedPref.getFloat("arousalSum2",-1)+":"+sharedPref.getInt("arousalN2",-1)+"&reportDelay="+(System.currentTimeMillis()-startedTime)/1000+"&sleepdata1="+data1+"&sleepdata2="+data2+"&sleepdata3="+data3;
-        String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6FCssjBFQNC95j0?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getBoolean("pType",false)+"&night="+sharedPref.getInt("currentNight",-1)+"&arousalSum="+sharedPref.getFloat("arousalSum2",-1)+"&arousalN="+sharedPref.getInt("arousalN2",-1)+"&reportDelay="+(System.currentTimeMillis()-startedTime)/1000+"&highestVol="+sharedPref.getFloat("highestVol",-1)+"&totalCues="+sharedPref.getInt("totalCues",0)+"&appVersion="+APP_VERSION+"&algo="+sharedPref.getBoolean("algo",false)+"&fitbitMode="+sharedPref.getBoolean("fitbitMode",false)+"&escalate="+sharedPref.getBoolean("acc_mode_escalate",false)+"_"+sharedPref.getBoolean("acc_mode_offset",true);
+        String pageTarget="https://mit.co1.qualtrics.com/jfe/form/SV_3HRH1il7tYOIC6G?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getBoolean("pType",false)+"&night="+sharedPref.getInt("currentNight",-1)+"&arousalSum="+sharedPref.getFloat("arousalSum2",-1)+"&arousalN="+sharedPref.getInt("arousalN2",-1)+"&reportDelay="+(System.currentTimeMillis()-startedTime)/1000+"&highestVol="+sharedPref.getFloat("highestVol",-1)+"&totalCues="+sharedPref.getInt("totalCues",0)+"&appVersion="+APP_VERSION+"&algo="+sharedPref.getBoolean("algo",false)+"&fitbitMode="+sharedPref.getBoolean("fitbitMode",false)+"&escalate="+sharedPref.getBoolean("acc_mode_escalate",false)+"_"+sharedPref.getBoolean("acc_mode_offset",true);
 
         Log.i("pagetarget",pageTarget);
         WebView wv = (WebView) findViewById(R.id.reportView);
