@@ -381,6 +381,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                                    public void onClick(View v) {
                                                     editor.putInt("taskStatus",6);
                                                     editor.putLong("startedTime",System.currentTimeMillis());
+                                                    lucidMusic.stop(); //make sure the cue stops
                                                     if (sharedPref.getInt("totalCues", 0) == 0 && ONSET_TIME > 18000) {//no cues were delivered, so make the onset time earlier
                                                         editor.putInt("onsetTime",ONSET_TIME-1800);
                                                     }
