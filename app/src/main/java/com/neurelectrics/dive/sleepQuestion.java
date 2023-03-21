@@ -80,8 +80,8 @@ public class sleepQuestion extends AppCompatActivity {
             editor.putInt("pid",pid);
             editor.putBoolean("algo",false);
             //set the participant type (control or real)
-            //editor.putBoolean("pType",rand.nextBoolean());
-            editor.putBoolean("pType",true); //TODO: change back to normal for distribution
+            editor.putBoolean("pType",rand.nextBoolean());
+
             //set the escalation type for accelerometer mode (escalate or don't)
             editor.putBoolean("acc_mode_escalate",true);
             //stop stimulation at REm offset (or don't?)
