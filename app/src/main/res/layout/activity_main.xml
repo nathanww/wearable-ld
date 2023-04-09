@@ -68,7 +68,7 @@
         android:id="@+id/reportButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="I'm awake"
+        android:text="I'm ready to get up"
         android:visibility="gone" />
 
     <Button

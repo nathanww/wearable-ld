@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     boolean enableSleepCueing=true;
     float oldx,oldy,oldz=0; //variables to detect sudden motion
     float MOTION_THRESH=5f; //how much motion is considered an arousal
-    float ONSET_THRESH=0.5f; //how high does the rem probability have to be to trigger cueing?
+    float ONSET_THRESH=0.1f; //how high does the rem probability have to be to trigger cueing?
     float cueVolume=0.0f;
     float CUE_VOLUME_INC=0.00075f; //how much does the cue volume increase ach second?
     int BUFFER_SIZE=360; //HOW MANY TO AVERAGE?
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     boolean cueRunning=false;
     int ONSET_TIME; //minimum time the app must be running before it will cue
     int BACKOFF_TIME=600;
-    float MOTION_PERCENT=0.1f; //percentile for epochs with no motion. 0.05 means that 90% of samples in the baseline have FEWER epochs with no motion
+    float MOTION_PERCENT=0.5f; //percentile for epochs with no motion. 0.05 means that 90% of samples in the baseline have FEWER epochs with no motion
     int elapsedTime=0;
     int lastArousal=(0-BACKOFF_TIME);
     boolean acc_mode_escalate=true; //does the volume escalate in accelerometer mode? This is randomly assinged
