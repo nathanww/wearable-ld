@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     MediaPlayer startTraining;
     MediaPlayer training2;
     MediaPlayer lucidMusic;
+    MediaPlayer loudCue;
     MediaPlayer signalcue;
     MediaPlayer noguidance;
     Timer trainingTimer;
@@ -519,12 +520,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     Log.i("motioncount",""+count);
                     if (elapsedTime >= ONSET_TIME && !shamNight) {  //we are in the window where cueing can start
                         //cueing can start if we exceed the threhsold, or if we ever exceedd the threshold and are running in no-offset mode
-                        if ((comparison <= MOTION_PERCENT || (everCued && sharedPref.getBoolean("acc_mode_offset",true)==false)) && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
+                        if ((comparison <= MOTION_PERCENT ) && enableSleepCueing) { //cue starts if we have exceeded the threshold and keeps running until an arousal interrupts it
                             Log.i("cuedata", "startcue-motion");
                             everCued=true;
                             maximizeVolume();
                             if (!cueRunning && !shamNight) {
                                 cueRunning = true;
+                                loudCue = MediaPlayer.create(MainActivity.this, R.raw.trainingsignal);
+                                loudCue.setVolume(1.0f, 1.0f);
+                                loudCue.setLooping(false);
+                                loudCue.start();
                                 lucidMusic = MediaPlayer.create(MainActivity.this, R.raw.combinedsignal);
                                 lucidMusic.setVolume(soundVolume, soundVolume);
                                 lucidMusic.setLooping(true);
