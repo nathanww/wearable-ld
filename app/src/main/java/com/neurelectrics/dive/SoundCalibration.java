@@ -59,7 +59,7 @@ public class SoundCalibration extends AppCompatActivity {
 
         //set up the sound files
         training1= MediaPlayer.create(SoundCalibration.this,R.raw.soundcheck1);
-        sound1= MediaPlayer.create(SoundCalibration.this,R.raw.twobeeps);
+        sound1= MediaPlayer.create(SoundCalibration.this,R.raw.beeps);
 
 
         Button calStart = (Button) findViewById(R.id.calStart);
