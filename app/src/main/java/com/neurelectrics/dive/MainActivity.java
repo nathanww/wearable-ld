@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         mainContext=this;
         //set up the lucid music
-        lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.trainingsignalshort);
+        lucidMusic= MediaPlayer.create(MainActivity.this,R.raw.trainingsignalshortbeeps);
         lucidMusic.setVolume(1.0f,1.0f);
 
         //get ether this is a Fitbit user or not
@@ -526,11 +526,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             maximizeVolume();
                             if (!cueRunning && !shamNight) {
                                 cueRunning = true;
+                                /*
                                 loudCue = MediaPlayer.create(MainActivity.this, R.raw.trainingsignal);
                                 loudCue.setVolume(1.0f, 1.0f);
                                 loudCue.setLooping(false);
-                                loudCue.start();
-                                lucidMusic = MediaPlayer.create(MainActivity.this, R.raw.combinedsignal);
+                                loudCue.start();*/
+                                lucidMusic = MediaPlayer.create(MainActivity.this, R.raw.combinedsignalbeeps);
                                 lucidMusic.setVolume(soundVolume, soundVolume);
                                 lucidMusic.setLooping(true);
 
@@ -659,7 +660,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                         if (!cueRunning && !shamNight) {
                             cueRunning = true;
-                            lucidMusic = MediaPlayer.create(MainActivity.this, R.raw.combinedsignal);
+                            lucidMusic = MediaPlayer.create(MainActivity.this, R.raw.combinedsignalbeeps);
                             lucidMusic.setVolume(cueVolume, cueVolume);
                             lucidMusic.setLooping(true);
 
