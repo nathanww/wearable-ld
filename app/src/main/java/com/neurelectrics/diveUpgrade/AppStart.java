@@ -46,14 +46,10 @@ public class AppStart extends AppCompatActivity {
             startActivity(dreamReport);
         }
         if (taskStatus == 7) { //end of the night, if this is night 7 then do the night 7 report, otherwise show the done screen
-            if (!sharedPref.getBoolean("night7done",false) && sharedPref.getInt("currentNight",0)==6) {
-                Intent night7 = new Intent(this, Night7.class);
-                startActivity(night7);
-            }
-            else {
+
                 Intent done = new Intent(this, Done.class);
                 startActivity(done);
-            }
+
         }
     }
     @Override

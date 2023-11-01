@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -122,9 +123,12 @@ public class DreamReport extends AppCompatActivity {
     }
 
     private void askWhereToGo() {
+        Log.d("where2go","initiated");
         if (System.currentTimeMillis() - startedTime > (1800*1000)) { //if we've waited more than 30 min to fill out the dream report, it's a delayed report and we shouldn't offer the option to go back to sleep
             editor.putInt("taskStatus",7);
             editor.commit();
+            Intent b2s = new Intent(this, AppStart.class);
+            startActivity(b2s);
             finish();
         }
         else {
@@ -136,6 +140,8 @@ public class DreamReport extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int id) {
                             editor.putInt("taskStatus", 5);
                             editor.commit();
+                            Intent b2s = new Intent(getApplicationContext(), AppStart.class);
+                            startActivity(b2s);
                             finish();
                         }
                     })
@@ -146,6 +152,8 @@ public class DreamReport extends AppCompatActivity {
                             editor.putString("sleepdata","");
                             editor.putInt("totalCues",0);
                             editor.commit();
+                            Intent b2s = new Intent(getApplicationContext(), AppStart.class);
+                            startActivity(b2s);
                             finish();
                         }
                     });
@@ -222,26 +230,10 @@ public class DreamReport extends AppCompatActivity {
         //String pageTarget="https://northwestern.az1.qualtrics.com/jfe/form/SV_6FCssjBFQNC95j0?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getBoolean("pType",false)+"&night="+sharedPref.getInt("currentNight",-1)+"&arousal="+sharedPref.getFloat("arousalSum2",-1)+":"+sharedPref.getInt("arousalN2",-1)+"&reportDelay="+(System.currentTimeMillis()-startedTime)/1000+"&sleepdata1="+data1+"&sleepdata2="+data2+"&sleepdata3="+data3;
         String pageTarget="https://mit.co1.qualtrics.com/jfe/form/SV_3HRH1il7tYOIC6G?pid="+pid+"&wakeThresh="+sharedPref.getFloat("wakeSoundThresh",-1)+"&participantType="+sharedPref.getBoolean("pType",false)+"&night="+sharedPref.getInt("currentNight",-1)+"&arousalSum="+sharedPref.getFloat("arousalSum2",-1)+"&arousalN="+sharedPref.getInt("arousalN2",-1)+"&reportDelay="+(System.currentTimeMillis()-startedTime)/1000+"&highestVol="+sharedPref.getFloat("highestVol",-1)+"&totalCues="+sharedPref.getInt("totalCues",0)+"&appVersion="+APP_VERSION+"&algo="+sharedPref.getBoolean("algo",false)+"&fitbitMode="+sharedPref.getBoolean("fitbitMode",false)+"&escalate="+sharedPref.getBoolean("acc_mode_escalate",false)+"_"+sharedPref.getBoolean("acc_mode_offset",true);
 
-        Log.i("pagetarget",pageTarget);
-        WebView wv = (WebView) findViewById(R.id.reportView);
-        wv.loadUrl(pageTarget);
-        WebSettings webSettings = wv.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        Context con=getApplicationContext();
-        wv.setWebViewClient(new WebViewClient() {
+        askWhereToGo();
 
-            public void onPageFinished(WebView view, String url) {
-                Log.i("dreamreport","pageload finished");
 
-                if (url.indexOf("github") > -1) {
-                    Log.i("squrl",url);
-                    Log.i("sq","complete");
 
-                    askWhereToGo();
-
-                }
-            }
-        });
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {

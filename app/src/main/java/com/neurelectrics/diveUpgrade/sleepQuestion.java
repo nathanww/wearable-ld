@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -88,6 +89,14 @@ public class sleepQuestion extends AppCompatActivity {
 
             editor.commit();
         }
+
+
+        editor.putInt("taskStatus",3);
+        editor.commit();
+        Intent b2s = new Intent(this, AppStart.class);
+        startActivity(b2s);
+        finish();
+        /*
         String pageTarget="https://mit.co1.qualtrics.com/jfe/form/SV_9FFfXqpxrD9bJwG?participantID="+pid;
         WebView wv = (WebView) findViewById(R.id.sqView);
         wv.loadUrl(pageTarget);
@@ -106,7 +115,7 @@ public class sleepQuestion extends AppCompatActivity {
                     finish();
                 }
             }
-        });
+        });*/
 
     }
 }

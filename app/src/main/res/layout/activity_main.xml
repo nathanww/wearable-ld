@@ -8,6 +8,13 @@
     android:keepScreenOn="true"
     android:orientation="vertical"
     tools:context=".MainActivity">
+    <TextView
+        android:id="@+id/participantID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Participant ID:"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"/>
 
     <TextView
         android:id="@+id/header"

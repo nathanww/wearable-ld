@@ -113,6 +113,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //show the participant ID:
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        int pid=sharedPref.getInt("pid",0);
+        TextView participantID=(TextView)findViewById(R.id.participantID);
+        participantID.setText("Participant ID:"+pid);
 
         //keep the cpu on
         try {
@@ -138,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         lucidMusic.setVolume(1.0f,1.0f);
 
         //get ether this is a Fitbit user or not
-        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        //SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         fitbitMode=sharedPref.getBoolean("fitbitMode",true);
         fitbitMode=false;
